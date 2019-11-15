@@ -1,0 +1,26 @@
+{
+  "name": "cesium-start-example",
+  "version": "1.0.0",
+  "description": "cesium 入门示例",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sogrey/Cesium-start-Example.git"
+  },
+  "keywords": [
+    "cesium",
+    "examples"
+  ],
+  "author": "Sogrey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sogrey/Cesium-start-Example/issues"
+  },
+  "homepage": "https://github.com/Sogrey/Cesium-start-Example#readme",
+  "dependencies": {
+    "cesium": "^1.63.1"
+  }
+}
