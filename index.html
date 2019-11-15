@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门 - Hello worrld</title>
+    <style>
+        @import url(node_modules/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <script src="node_modules/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script>
+        var viewer = new Cesium.Viewer("cesiumContainer");
+    </script>
+</body>
+
+</html>
