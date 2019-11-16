@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门 - 视频融合</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+
+    <video id="trailer" muted autoplay loop crossorigin controls style="position: absolute;top: 0; width: 400px;">
+        <source src="../../assets/videos/movie.ogv" type="video/ogg">
+        Your browser does not support the <code>video</code> element.
+    </video>
+
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script>
+        var defaultOption = {
+            geocoder: true, //A location search tool that flies the camera to queried location. Uses Bing Maps data by default.
+            homeButton: true, //Flies the viewer back to a default view.
+            sceneModePicker: true, //Switches between 3D, 2D and Columbus View (CV) modes.
+            baseLayerPicker: true, //Chooses the imagery and terrain to display on the globe.
+            navigationHelpButton: true, //Displays the default camera controls.
+            animation: true, //Controls the play speed for view animation.
+            creditsDisplay: true, //Displays data attributions. Almost always required!
+            timeline: true, //Indicates current time and allows users to jump to a specific time using the scrubber.
+            fullscreenButton: true, //Makes the Viewer fullscreen.
+        };
+        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
+        viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
+        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
+            ._creditContainer); //去掉版权信息
+
+        var videoElement = document.getElementById('trailer'); //获得video对象
+        var sphere = viewer.entities.add({
+            name: 'video plane outline',
+            position: Cesium.Cartesian3.fromDegrees(-79, 39, 0),
+            plane: {
+                plane: new Cesium.Plane(Cesium.Cartesian3.UNIT_Z, 0.0),
+                dimensions: new Cesium.Cartesian2(400.0, 217.5),
+                fill: true,
+                outline: true,
+                material: videoElement //指定材质
+            },
+            polygon: {
+                hierarchy: Cesium.Cartesian3.fromDegreesArray([
+                    -79, 39,
+                    -79.015, 39,
+                    -79.02, 39.01,
+                    -79, 39.01
+                ]),
+                material: videoElement //指定材质
+            }
+        });
+
+        viewer.camera.setView({
+            destination: new Cesium.Cartesian3(946464.2029993554, -4874061.650405925, 3994328.8049272224),
+        });
+    </script>
+</body>
+
+</html>
