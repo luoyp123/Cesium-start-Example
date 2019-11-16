@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门 - Hello worrld</title>
+    <style>
+        @import url(../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <div class="backdrop" id="menu">
+        <h2>Viewer widgets</h2>
+        <span><strong>widgets</strong></span>
+        <div class="nowrap">
+            <input id="Geocoder" name="source" type="checkbox" checked />
+            <label for="Geocoder">Geocoder</label>
+        </div>
+        <div class="nowrap">
+            <input id="HomeButton" name="source" type="checkbox" checked />
+            <label for="HomeButton">HomeButton</label>
+        </div>
+        <div class="nowrap">
+            <input id="SceneModePicker" name="source" type="checkbox" checked />
+            <label for="SceneModePicker">SceneModePicker</label>
+        </div>
+        <div class="nowrap">
+            <input id="BaseLayerPicker" name="source" type="checkbox" checked />
+            <label for="BaseLayerPicker">BaseLayerPicker</label>
+        </div>
+        <div class="nowrap">
+            <input id="NavigationHelpButton" name="source" type="checkbox" checked />
+            <label for="NavigationHelpButton">NavigationHelpButton</label>
+        </div>
+        <div class="nowrap">
+            <input id="Animation" name="source" type="checkbox" checked />
+            <label for="Animation">Animation</label>
+        </div>
+        <div class="nowrap">
+            <input id="CreditsDisplay" name="source" type="checkbox" checked />
+            <label for="CreditsDisplay">CreditsDisplay</label>
+        </div>
+        <div class="nowrap">
+            <input id="Timeline" name="source" type="checkbox" checked />
+            <label for="Timeline">Timeline</label>
+        </div>
+        <div class="nowrap">
+            <input id="FullscreenButton" name="source" type="checkbox" checked />
+            <label for="FullscreenButton">FullscreenButton</label>
+        </div>
+        <br>
+    </div>
+    <script src="../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script>
+        var defaultOption = {
+            geocoder: true, //A location search tool that flies the camera to queried location. Uses Bing Maps data by default.
+            homeButton: true, //Flies the viewer back to a default view.
+            sceneModePicker: true, //Switches between 3D, 2D and Columbus View (CV) modes.
+            baseLayerPicker: true, //Chooses the imagery and terrain to display on the globe.
+            navigationHelpButton: true, //Displays the default camera controls.
+            animation: true, //Controls the play speed for view animation.
+            creditsDisplay: true, //Displays data attributions. Almost always required!
+            timeline: true, //Indicates current time and allows users to jump to a specific time using the scrubber.
+            fullscreenButton: true, //Makes the Viewer fullscreen.
+        };
+        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
+
+        //Add basic drag and drop functionality
+        viewer.extend(Cesium.viewerCesiumNavigationMixin, {});
+
+        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget._creditContainer); //去掉版权信息
+
+        $(".nowrap input[type='checkbox']").click(function () {
+            var isChecked = $(this).prop("checked");
+            switch ($(this).attr("id")) {
+                case "Geocoder":
+                    if (isChecked) {
+                        $($('.cesium-viewer-toolbar .cesium-viewer-geocoderContainer')[0]).html("");
+                        var Geocoder = new Cesium.Geocoder({
+                            container: $('.cesium-viewer-toolbar .cesium-viewer-geocoderContainer')[0],
+                            scene: viewer.cesiumWidget.scene
+                        });
+                    } else {
+                        if (viewer.geocoder && !viewer.geocoder.isDestroyed()) {
+                            viewer.geocoder.destroy();
+                        } else {
+                            $($('.cesium-viewer-toolbar .cesium-viewer-geocoderContainer')[0]).html("");
+                        }
+                    }
+                    break;
+                case "HomeButton":
+                    if (viewer.homeButton && !viewer.homeButton.isDestroyed()) {
+                        viewer.homeButton.destroy();
+                    }
+                    break;
+                case "SceneModePicker":
+                    if (viewer.sceneModePicker && !viewer.sceneModePicker.isDestroyed()) {
+                        viewer.sceneModePicker.destroy();
+                    }
+                    break;
+                case "BaseLayerPicker":
+                    if (viewer.baseLayerPicker && !viewer.baseLayerPicker.isDestroyed()) {
+                        viewer.baseLayerPicker.destroy();
+                    }
+                    break;
+                case "NavigationHelpButton":
+                    if (viewer.navigationHelpButton && !viewer.navigationHelpButton.isDestroyed()) {
+                        viewer.navigationHelpButton.destroy();
+                    }
+                    break;
+                case "Animation":
+                    if (viewer.animation && !viewer.animation.isDestroyed()) {
+                        viewer.animation.destroy();
+                    }
+                    break;
+                case "CreditsDisplay":
+                    if (viewer.creditsDisplay && !viewer.creditsDisplay.isDestroyed()) {
+                        viewer.creditsDisplay.destroy();
+                    }
+                    break;
+                case "Timeline":
+                    if (viewer.timeline && !viewer.timeline.isDestroyed()) {
+                        viewer.timeline.destroy();
+                    }
+                    break;
+                case "FullscreenButton":
+                    if (viewer.fullscreenButton && !viewer.fullscreenButton.isDestroyed()) {
+                        viewer.fullscreenButton.destroy();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+
+
+        //         var imageryViewModels = [];
+        //         imageryViewModels.push(new Cesium.ProviderViewModel({
+        //             name: 'Open\u00adStreet\u00adMap',
+        //             iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/openStreetMap.png'),
+        //             tooltip: 'OpenStreetMap (OSM) is a collaborative project to create a free editable \
+        // map of the world.\nhttp://www.openstreetmap.org',
+        //             creationFunction: function () {
+        //                 return new Cesium.OpenStreetMapImageryProvider({
+        //                     url: 'https://a.tile.openstreetmap.org/'
+        //                 });
+        //             }
+        //         }));
+
+        //         imageryViewModels.push(new Cesium.ProviderViewModel({
+        //             name: 'Earth at Night',
+        //             iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/blackMarble.png'),
+        //             tooltip: 'The lights of cities and villages trace the outlines of civilization \
+        // in this global view of the Earth at night as seen by NASA/NOAA\'s Suomi NPP satellite.',
+        //             creationFunction: function () {
+        //                 return new Cesium.IonImageryProvider({
+        //                     assetId: 3812
+        //                 });
+        //             }
+        //         }));
+        //         imageryViewModels.push(new Cesium.ProviderViewModel({
+        //             name: 'Natural Earth\u00a0II',
+        //             iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/naturalEarthII.png'),
+        //             tooltip: 'Natural Earth II, darkened for contrast.\nhttp://www.naturalearthdata.com/',
+        //             creationFunction: function () {
+        //                 return new Cesium.TileMapServiceImageryProvider({
+        //                     url: Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
+        //                 });
+        //             }
+        //         }));
+
+        //         var baseLayerPicker = new Cesium.BaseLayerPicker(
+        //             document.getElementsByClassName('cesium-viewer-toolbar')[0], {
+        //                 globe: viewer.cesiumWidget.scene.globe,
+        //                 imageryProviderViewModels: imageryViewModels
+        //             });
+    </script>
+</body>
+
+</html>
