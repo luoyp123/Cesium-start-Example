@@ -38,6 +38,18 @@
         <div class="nowrap">
             <button id="view-beijing-flyto-500-pitch45-heading45">面朝大海，春暖花开</button>
         </div>
+        <span><strong>获取视角</strong></span>
+        <div class="nowrap">
+            <button id="getCamera">获取视角</button>
+        </div>
+        <div class="nowrap">
+            position:<input id="position" type="text" /><br />
+            heading:<input id="heading" type="number" /><br />
+            pitch:<input id="pitch" type="number" />
+        </div>
+        <div class="nowrap">
+            <button id="setCamera">设置视角</button>
+        </div>
         <br>
     </div>
     <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
@@ -121,10 +133,42 @@
                         }
                     });
                     break;
+                case "getCamera": //获取视角
+                    var cameraView = getCamera();
+                    $("#position").val(cameraView.position.x + "," + cameraView.position.y + "," + cameraView
+                        .position.z);
+                    $("#heading").val(cameraView.heading);
+                    $("#pitch").val(cameraView.pitch);
+                    break;
+                case "setCamera": //设置视角
+                    var positionArray = $("#position").val().split(",");
+                    var cameraView = {
+                        position: new Cesium.Cartesian3(parseFloat(positionArray[0]), parseFloat(
+                            positionArray[1]), parseFloat(positionArray[2])),
+                        heading: $("#heading").val(),
+                        pitch: $("#pitch").val()
+                    }
+                    viewer.camera.flyTo({
+                        destination: cameraView.position,
+                        orientation: {
+                            heading: cameraView.heading, // east, default value is 0.0 (north)
+                            pitch: cameraView.pitch, // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
                 default:
                     break;
             }
         });
+        //获取视角
+        function getCamera() {
+            return {
+                position: viewer.camera.position,
+                heading: viewer.camera.heading,
+                pitch: viewer.camera.pitch
+            }
+        }
     </script>
 </body>
 
