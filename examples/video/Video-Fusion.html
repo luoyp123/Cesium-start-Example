@@ -36,6 +36,7 @@
             fullscreenButton: true, //Makes the Viewer fullscreen.
         };
         var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
+        window.viewer = viewer;
         viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
         viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
             ._creditContainer); //去掉版权信息

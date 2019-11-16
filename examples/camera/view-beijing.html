@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门 - Viewer 以及一些有用的组件</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <div class="backdrop" id="menu">
+        <h2>Viewer camera</h2>
+        <span><strong>setView</strong></span>
+        <div class="nowrap">
+            <button id="view-beijing">查看北京城</button>
+        </div>
+        <div class="nowrap">
+            <button id="view-beijing-500">在靠近点</button>
+        </div>
+        <span><strong>flyTo</strong></span>
+        <div class="nowrap">
+            <button id="view-beijing-flyto">飞向北京城</button>
+        </div>
+        <div class="nowrap">
+            <button id="view-beijing-flyto-500">在飞近点</button>
+        </div>
+        <div class="nowrap">
+            <button id="view-beijing-flyto-500-pitch45">倾斜摄影</button>
+        </div>
+        <div class="nowrap">
+            <button id="view-beijing-flyto-500-pitch45-heading45">面朝大海，春暖花开</button>
+        </div>
+
+        <br>
+    </div>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script>
+        var defaultOption = {
+            geocoder: true, //A location search tool that flies the camera to queried location. Uses Bing Maps data by default.
+            homeButton: true, //Flies the viewer back to a default view.
+            sceneModePicker: true, //Switches between 3D, 2D and Columbus View (CV) modes.
+            baseLayerPicker: true, //Chooses the imagery and terrain to display on the globe.
+            navigationHelpButton: true, //Displays the default camera controls.
+            animation: true, //Controls the play speed for view animation.
+            creditsDisplay: true, //Displays data attributions. Almost always required!
+            timeline: true, //Indicates current time and allows users to jump to a specific time using the scrubber.
+            fullscreenButton: true, //Makes the Viewer fullscreen.
+        };
+        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
+
+        window.viewer = viewer;
+
+        $(".nowrap button").click(function () {
+            switch ($(this).attr("id")) {
+                case "view-beijing": //查看北京城
+                    viewer.camera.setView({
+                        destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 15000.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
+                            pitch: Cesium.Math.toRadians(-90), // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
+                case "view-beijing-500": //在靠近点
+                    viewer.camera.setView({
+                        destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 5000.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
+                            pitch: Cesium.Math.toRadians(-90), // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
+                case "view-beijing-flyto": //飞向北京城
+                    viewer.camera.flyTo({
+                        destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 15000.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
+                            pitch: Cesium.Math.toRadians(-90), // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
+                case "view-beijing-flyto-500": //再飞近点
+                    viewer.camera.flyTo({
+                        destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 5000.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
+                            pitch: Cesium.Math.toRadians(-90), // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
+                case "view-beijing-flyto-500-pitch45": //向下倾斜45度
+                    viewer.camera.flyTo({
+                        destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 5000.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
+                            pitch: Cesium.Math.toRadians(-45), // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
+                case "view-beijing-flyto-500-pitch45-heading45": //转向右90度，朝东
+                    viewer.camera.flyTo({
+                        destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 5000.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(90.0), // east, default value is 0.0 (north)
+                            pitch: Cesium.Math.toRadians(-45), // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
+                default:
+                    break;
+            }
+        });
+    </script>
+</body>
+
+</html>
