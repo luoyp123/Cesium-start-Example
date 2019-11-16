@@ -1,4 +1,6 @@
-html, body, #cesiumContainer {
+html,
+body,
+#cesiumContainer {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -7,11 +9,13 @@ html, body, #cesiumContainer {
     font-family: sans-serif;
     background: #000;
 }
+
 #menu {
     position: absolute;
     left: 10px;
     top: 10px;
 }
+
 .backdrop {
     display: inline-block;
     background: rgba(42, 42, 42, 0.7);
@@ -21,7 +25,39 @@ html, body, #cesiumContainer {
     color: #fff;
     line-height: 150%;
     font-size: small;
+    overflow-y: auto;
+    max-height: 90%;
 }
-.backdrop a:link, .backdrop a:visited, .backdrop a:hover {
+
+.scrollbar {
+    width: 30px;
+    margin: 0 auto;
+    position: absolute;
+}
+
+.backdrop::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+
+.backdrop::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: #535353;
+}
+
+.backdrop::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background: #EDEDED;
+}
+
+.backdrop a:link,
+.backdrop a:visited,
+.backdrop a:hover {
     color: #fff
 }
