@@ -55,6 +55,19 @@
             <label for="FullscreenButton">FullscreenButton</label>
         </div>
         <br>
+        <div class="nowrap">
+            <input id="zoomControl" name="source" type="checkbox" checked />
+            <label for="zoomControl">添加缩放控件</label>
+        </div>
+        <div class="nowrap">
+            <input id="noRight" name="source" type="checkbox" checked />
+            <label for="noRight">去掉版权</label>
+        </div>
+        <br>
+        <div class="nowrap">
+            <label>以上部分组件去掉不可恢复，部分可以重新创建。</label>
+        </div>
+        <br>
     </div>
     <script src="../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
@@ -72,11 +85,6 @@
             fullscreenButton: true, //Makes the Viewer fullscreen.
         };
         var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
-
-        //Add basic drag and drop functionality
-        viewer.extend(Cesium.viewerCesiumNavigationMixin, {});
-
-        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget._creditContainer); //去掉版权信息
 
         $(".nowrap input[type='checkbox']").click(function () {
             var isChecked = $(this).prop("checked");
@@ -135,6 +143,14 @@
                     if (viewer.fullscreenButton && !viewer.fullscreenButton.isDestroyed()) {
                         viewer.fullscreenButton.destroy();
                     }
+                    break;
+                case "zoomControl":
+                    //Add basic drag and drop functionality
+                    viewer.extend(Cesium.viewerCesiumNavigationMixin, {});
+                    break;
+                case "noRight":
+                    viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
+                        ._creditContainer); //去掉版权信息
                     break;
                 default:
                     break;
