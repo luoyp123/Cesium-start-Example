@@ -25,5 +25,3 @@ git commit -m 'deploy master'
 git push -f https://github.com/Sogrey/Cesium-start-Example.git master
 
 echo -e "\033[32;40m done \033[0m "
-
-cd -
