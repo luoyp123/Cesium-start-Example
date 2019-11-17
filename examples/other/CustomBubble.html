@@ -34,6 +34,9 @@
         <div class="nowrap">
             <button id="addLabel">添加标签</button>
         </div>
+        <div class="nowrap">
+            <button id="flyToLabel">飞向标签</button>
+        </div>
         <br>
         <div class="nowrap">
             <button id="setCamera">已经设置默认视角在中国</button>
@@ -124,7 +127,12 @@
                             height: 32
                         }
                     });
-                    viewer.flyTo(billboard);
+
+                    break;
+                case "flyToLabel":
+                    if (billboard) {
+                        viewer.flyTo(billboard);
+                    }
                     break;
                 default:
                     break;
