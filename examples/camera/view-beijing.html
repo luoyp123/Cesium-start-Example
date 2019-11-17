@@ -51,6 +51,10 @@
             <button id="setCamera">设置视角</button>
         </div>
         <br>
+        <div class="nowrap">
+            <button id="setCamera">已经设置默认视角在中国</button>
+        </div>
+        <br>        
     </div>
     <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
@@ -67,6 +71,11 @@
             timeline: true, //Indicates current time and allows users to jump to a specific time using the scrubber.
             fullscreenButton: true, //Makes the Viewer fullscreen.
         };
+
+        //设置默认视角在中国
+        var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
+        Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
+
         var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
 
         window.viewer = viewer;

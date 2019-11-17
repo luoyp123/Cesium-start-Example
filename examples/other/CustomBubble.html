@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门 - 自定义泡泡</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+
+        #info {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            z-index: 1000;
+            display: none;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid #d4a320;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;">
+        <div id="info"></div>
+    </div>
+    <!-- Some input elements for our app. -->
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>标签及自定义气泡</h2>
+        <div class="nowrap">
+            <button id="addLabel">添加标签</button>
+        </div>
+        <br>
+        <div class="nowrap">
+            <button id="setCamera">已经设置默认视角在中国</button>
+        </div>
+        <br>
+    </div>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script>
+        var defaultOption = {
+            geocoder: true, //A location search tool that flies the camera to queried location. Uses Bing Maps data by default.
+            homeButton: true, //Flies the viewer back to a default view.
+            sceneModePicker: true, //Switches between 3D, 2D and Columbus View (CV) modes.
+            baseLayerPicker: true, //Chooses the imagery and terrain to display on the globe.
+            navigationHelpButton: true, //Displays the default camera controls.
+            animation: true, //Controls the play speed for view animation.
+            creditsDisplay: true, //Displays data attributions. Almost always required!
+            timeline: true, //Indicates current time and allows users to jump to a specific time using the scrubber.
+            fullscreenButton: true, //Makes the Viewer fullscreen.
+        };
+
+        //设置默认视角在中国
+        var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
+        Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
+
+        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
+
+        window.viewer = viewer;
+
+
+
+
+
+        var longitude = 114;
+        var latitude = 36;
+        var height = 0;
+        var position = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+
+        var heading = Cesium.Math.toRadians(0);
+        var pitch = Cesium.Math.toRadians(0);
+        var roll = Cesium.Math.toRadians(0);
+        var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+        var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+
+
+
+        var info = document.getElementById("info");
+
+
+        var billboard;
+        var scene = viewer.scene;
+        var pickPosition;
+        viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
+            var picked = scene.pick(movement.position);
+            if (picked) {
+                if (billboard && picked.id == billboard) {
+
+                    pickPosition = scene.pickPosition(movement.position);
+                    showInfo(billboard);
+                }
+            } else {
+                hideInfo();
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        var removeChanged = scene.postRender.addEventListener(function (percentage) {
+
+            //转换到屏幕坐标
+            if (pickPosition && info.style.display == 'block') {
+                var winpos = scene.cartesianToCanvasCoordinates(pickPosition);
+                if (winpos) {
+                    info.style.left = (winpos.x - 100 / 2).toFixed(0) + 'px';
+                    info.style.top = (winpos.y - 100).toFixed(0) + 'px';
+                }
+            }
+        });
+
+        $(".nowrap button").click(function () {
+            switch ($(this).attr("id")) {
+                case "addLabel": //添加标签
+                    billboard = viewer.entities.add({
+                        name: 'entity测试',
+                        description: '这是我们第一个测试',
+                        position: Cesium.Cartesian3.fromDegrees(110, 40, 0),
+                        billboard: {
+                            image: '../../assets/img/position.png',
+                            width: 32,
+                            height: 32
+                        }
+                    });
+                    viewer.flyTo(billboard);
+                    break;
+                default:
+                    break;
+            }
+        });
+        //获取视角
+        function getCamera() {
+            return {
+                position: viewer.camera.position,
+                heading: viewer.camera.heading,
+                pitch: viewer.camera.pitch
+            }
+        }
+
+        function showInfo(entity) {
+            info.innerHTML = entity.name + '<br>' + entity.description;
+            info.style.display = 'block';
+        }
+
+        function hideInfo() {
+            info.style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
