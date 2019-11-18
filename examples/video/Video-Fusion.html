@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
+    <!-- https://sandcastle.cesium.com/index.html?src=Video.html -->
+    <!-- https://blog.csdn.net/u012308481/article/details/88826264 -->
+    <!-- https://www.jianshu.com/p/d6c11c50f89c -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +17,7 @@
 <body>
     <div id="cesiumContainer" style="height: 100%;"></div>
 
-    <video id="trailer" muted autoplay loop crossorigin controls style="position: absolute;top: 0; width: 400px;">
+    <video id="trailer" muted autoplay loop crossorigin controls style="position: absolute;top: 0; width: 400px;z-index:-1;">
         <source src="../../assets/videos/movie.ogv" type="video/ogg">
         Your browser does not support the <code>video</code> element.
     </video>
@@ -43,13 +45,14 @@
 
         var videoElement = document.getElementById('trailer'); //获得video对象
         var sphere = viewer.entities.add({
+            id:"video_plane",
             name: 'video plane outline',
             position: Cesium.Cartesian3.fromDegrees(-79, 39, 0),
             plane: {
                 plane: new Cesium.Plane(Cesium.Cartesian3.UNIT_Z, 0.0),
                 dimensions: new Cesium.Cartesian2(400.0, 217.5),
-                fill: true,
-                outline: true,
+                // fill: true,
+                // outline: true,
                 material: videoElement //指定材质
             },
             polygon: {
@@ -62,7 +65,7 @@
                 material: videoElement //指定材质
             }
         });
-
+        // viewer.entities.getById("video_plane").plane.material
         viewer.camera.setView({
             destination: new Cesium.Cartesian3(946464.2029993554, -4874061.650405925, 3994328.8049272224),
         });

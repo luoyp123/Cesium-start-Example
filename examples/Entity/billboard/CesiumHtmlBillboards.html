@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - Html广告牌</title>
+    <style>
+        @import url(../../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>Entity</h2>
+        <span><strong>billboard 广告牌</strong></span>
+        <div class="nowrap">
+            <button id="whereBeijing">北京在哪儿</button>
+        </div>
+        <!-- <div class="nowrap">
+            <button id="showLatLon">显示经纬度</button>
+        </div> -->
+        <br>
+        <div class="nowrap">
+            <button id="setCamera">已经设置默认视角在中国</button>
+        </div>
+        <br>
+    </div>
+    <script src="../../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../../libs/cesium-extend/HtmlBillboard.js"></script>
+    <script src="../../../libs/cesium-extend/HtmlBillboardCollection.js"></script>
+    <script src="../../../js/navigation.js"></script>
+    <script>
+        var defaultOption = {
+            geocoder: true, //A location search tool that flies the camera to queried location. Uses Bing Maps data by default.
+            homeButton: true, //Flies the viewer back to a default view.
+            sceneModePicker: true, //Switches between 3D, 2D and Columbus View (CV) modes.
+            baseLayerPicker: true, //Chooses the imagery and terrain to display on the globe.
+            navigationHelpButton: true, //Displays the default camera controls.
+            animation: true, //Controls the play speed for view animation.
+            creditsDisplay: true, //Displays data attributions. Almost always required!
+            timeline: true, //Indicates current time and allows users to jump to a specific time using the scrubber.
+            fullscreenButton: true, //Makes the Viewer fullscreen.
+        };
+
+        //设置默认视角在中国
+        var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
+        Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
+
+        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
+
+        window.viewer = viewer;
+
+        viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
+        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
+            ._creditContainer); //去掉版权信息
+
+
+
+        var htmlLayer = new HtmlBillboardCollection(viewer.scene);
+
+        function demoEntityAlignment() {
+            // Position
+            var lat = 116.39;
+            var lon = 39.9;
+            var alt = 500;
+
+            // Create an entity
+            var entity = viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(lat, lon, alt),
+                point: {
+                    pixelSize: 12,
+                    color: Cesium.Color.YELLOW
+                }
+            });
+
+            // Create a an HTML billboard to go along with the entity.
+            var ch = htmlLayer.add();
+            ch.position = Cesium.Cartesian3.fromDegrees(lat, lon, alt);
+
+            // The top-left corner of the element is the location of the element's 'position'.
+            // In order to center the element, use a negative left offset.
+            ch.offsetLeft = -46;
+            ch.offsetTop = 6;
+
+            ch.element.style.width = '97px';
+            ch.element.style.height = '60px';
+            ch.element.style.background = 'red';
+
+            // Note that the HTML takes clicks that would normally pass through to Cesium.
+            ch.element.innerHTML =
+                "<div style='text-align: center'> " +
+                "<button onclick='alert(\"Got click\")'>Beijing,China</button>" +
+                "</div>";
+        }
+
+        function demoMultipleBillboards() {
+            // Position
+            var lat, lon;
+
+            for (lat = -80; lat < 80; lat += 5) {
+                for (lon = -180; lon < 180; lon += 5) {
+                    var ch = htmlLayer.add();
+                    ch.position = Cesium.Cartesian3.fromDegrees(lon, lat);
+                    ch.offsetLeft = -15;
+                    ch.offsetTop = 10;
+
+                    ch.element.style.width = '30px';
+                    ch.element.style.height = '20px';
+
+                    ch.element.style.background = 'transparent';
+                    ch.element.style.fontSize = '6pt';
+                    ch.element.style.color = 'white';
+                    ch.element.innerHTML = lat + "," + lon;
+
+                    // Keep the HTML element from catching mouse events.
+                    ch.element.style.pointerEvents = 'none';
+                }
+            }
+        }
+
+        $(".nowrap button").click(function () {
+            switch ($(this).attr("id")) {
+                case "whereBeijing": //北京城
+                    demoEntityAlignment();
+                    viewer.camera.flyTo({
+                        destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 15000.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
+                            pitch: Cesium.Math.toRadians(-90), // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
+                case "showLatLon":
+                    demoMultipleBillboards();
+                    break;
+                default:
+                    break;
+            }
+        });
+        //获取视角
+        function getCamera() {
+            return {
+                position: viewer.camera.position,
+                heading: viewer.camera.heading,
+                pitch: viewer.camera.pitch
+            }
+        }
+
+
+
+
+
+
+        // scene = viewer.scene;
+        // var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+        // handler.setInputAction(function (evt) {
+        //     var scene = viewer.scene;
+        //     if (scene.mode !== Cesium.SceneMode.MORPHING) {
+        //         var pickedObject = scene.pick(evt.position);
+        //         if (scene.pickPositionSupported && Cesium.defined(pickedObject)) {
+        //             var cartesian = viewer.scene.pickPosition(evt.position);
+        //             if (Cesium.defined(cartesian)) {
+        //                 var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+        //                 var lng = Cesium.Math.toDegrees(cartographic.longitude);
+        //                 var lat = Cesium.Math.toDegrees(cartographic.latitude);
+        //                 var height = cartographic.height; //模型高度
+        //                 mapPosition = {
+        //                     x: lng,
+        //                     y: lat,
+        //                     z: height
+        //                 };
+        //                 console.log(mapPosition);
+        //             }
+        //         }
+        //     }
+        // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+        function getPosition() {
+            //得到当前三维场景
+            var scene = viewer.scene;
+            //得到当前三维场景的椭球体
+            var ellipsoid = scene.globe.ellipsoid;
+            var entity = viewer.entities.add({
+                label: {
+                    show: false
+                }
+            });
+            var longitudeString = null;
+            var latitudeString = null;
+            var height = null;
+            var cartesian = null;
+            // 定义当前场景的画布元素的事件处理
+            var handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+            //设置鼠标移动事件的处理函数，这里负责监听x,y坐标值变化
+            handler.setInputAction(function (movement) {
+                //通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
+                cartesian = viewer.camera.pickEllipsoid(movement.endPosition, ellipsoid);
+                if (cartesian) {
+                    //将笛卡尔坐标转换为地理坐标
+                    var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+                    //将弧度转为度的十进制度表示
+                    longitudeString = Cesium.Math.toDegrees(cartographic.longitude);
+                    latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
+                    //获取相机高度
+                    height = Math.ceil(viewer.camera.positionCartographic.height);
+                    entity.position = cartesian;
+                    entity.label.show = true;
+                    entity.label.text = '(' + longitudeString + ', ' + latitudeString + "," + height + ')';
+                } else {
+                    entity.label.show = false;
+                }
+            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+            //设置鼠标滚动事件的处理函数，这里负责监听高度值变化
+            handler.setInputAction(function (wheelment) {
+                height = Math.ceil(viewer.camera.positionCartographic.height);
+                entity.position = cartesian;
+                entity.label.show = true;
+                entity.label.text = '(' + longitudeString + ', ' + latitudeString + "," + height + ')';
+            }, Cesium.ScreenSpaceEventType.WHEEL);
+        }
+        getPosition();
+    </script>
+</body>
+
+</html>
