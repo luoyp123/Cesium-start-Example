@@ -4,6 +4,7 @@
   "description": "cesium 入门示例",
   "main": "index.js",
   "scripts": {
+    "start": "live-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,5 @@
   },
   "homepage": "https://github.com/Sogrey/Cesium-start-Example#readme",
   "dependencies": {
-    "cesium": "^1.63.1"
   }
 }

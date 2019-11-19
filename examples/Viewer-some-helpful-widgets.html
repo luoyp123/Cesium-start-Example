@@ -20,39 +20,39 @@
         <span><strong>widgets</strong></span>
         <div class="nowrap">
             <input id="Geocoder" name="source" type="checkbox" checked />
-            <label for="Geocoder">Geocoder</label>
+            <label for="Geocoder"><b>Geocoder</b> 用于查找地址和地标</label>
         </div>
         <div class="nowrap">
             <input id="HomeButton" name="source" type="checkbox" checked />
-            <label for="HomeButton">HomeButton</label>
+            <label for="HomeButton"><b>HomeButton</b> home键，点击回到默认视角</label>
         </div>
         <div class="nowrap">
             <input id="SceneModePicker" name="source" type="checkbox" checked />
-            <label for="SceneModePicker">SceneModePicker</label>
+            <label for="SceneModePicker"><b>SceneModePicker</b> 场景模式之间切换</label>
+        </div>
+        <div class="nowrap">
+            <input id="ProjectionPicker" name="source" type="checkbox" checked />
+            <label for="ProjectionPicker"><b>ProjectionPicker</b> 用于在透视和正投影之间进行切换</label>
         </div>
         <div class="nowrap">
             <input id="BaseLayerPicker" name="source" type="checkbox" checked />
-            <label for="BaseLayerPicker">BaseLayerPicker</label>
+            <label for="BaseLayerPicker"><b>BaseLayerPicker</b> 用于显示可用图像和地形提供程序的面板</label>
         </div>
         <div class="nowrap">
             <input id="NavigationHelpButton" name="source" type="checkbox" checked />
-            <label for="NavigationHelpButton">NavigationHelpButton</label>
+            <label for="NavigationHelpButton"><b>NavigationHelpButton</b> 用于显示使用鼠标导航地球的指令</label>
         </div>
         <div class="nowrap">
             <input id="Animation" name="source" type="checkbox" checked />
-            <label for="Animation">Animation</label>
-        </div>
-        <div class="nowrap">
-            <input id="CreditsDisplay" name="source" type="checkbox" checked />
-            <label for="CreditsDisplay">CreditsDisplay</label>
+            <label for="Animation"><b>Animation</b> 动画用于播放，暂停和倒退的按钮，以及当前时间和日期</label>
         </div>
         <div class="nowrap">
             <input id="Timeline" name="source" type="checkbox" checked />
-            <label for="Timeline">Timeline</label>
+            <label for="Timeline"><b>Timeline</b> 时间轴，用于显示和控制当前场景时间</label>
         </div>
         <div class="nowrap">
             <input id="FullscreenButton" name="source" type="checkbox" checked />
-            <label for="FullscreenButton">FullscreenButton</label>
+            <label for="FullscreenButton"><b>FullscreenButton</b> 用于切换全屏模式</label>
         </div>
         <br>
         <div class="nowrap">
@@ -74,15 +74,21 @@
     <script src="../js/navigation.js"></script>
     <script>
         var defaultOption = {
-            geocoder: true, //A location search tool that flies the camera to queried location. Uses Bing Maps data by default.
-            homeButton: true, //Flies the viewer back to a default view.
-            sceneModePicker: true, //Switches between 3D, 2D and Columbus View (CV) modes.
-            baseLayerPicker: true, //Chooses the imagery and terrain to display on the globe.
-            navigationHelpButton: true, //Displays the default camera controls.
-            animation: true, //Controls the play speed for view animation.
-            creditsDisplay: true, //Displays data attributions. Almost always required!
-            timeline: true, //Indicates current time and allows users to jump to a specific time using the scrubber.
-            fullscreenButton: true, //Makes the Viewer fullscreen.
+            animation: true, //左下角控制动画            
+            baseLayerPicker: true, //右上角图层选择器            
+            fullscreenButton: true, //右下角全屏按钮          
+            geocoder: true, //右上角搜索   
+            sceneModePicker: true, //2d/3d切换     
+            homeButton: true, //home键，点击回到默认视角
+            infoBox: true, //点击模型不显示cesium自带的信息框
+            // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
+            selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框  
+            timeline: true, //最下面时间轴            
+            navigationHelpButton: true, //右上角帮助按钮 
+            navigationInstructionsInitiallyVisibl: true,
+            useDefaultRenderLoop: true,
+            showRenderLoopErrors: true,
+            projectionPicker: true, //投影选择器
         };
         var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
 
@@ -114,6 +120,11 @@
                         viewer.sceneModePicker.destroy();
                     }
                     break;
+                case "ProjectionPicker":
+                    if (viewer.projectionPicker && !viewer.projectionPicker.isDestroyed()) {
+                        viewer.projectionPicker.destroy();
+                    }
+                    break;
                 case "BaseLayerPicker":
                     if (viewer.baseLayerPicker && !viewer.baseLayerPicker.isDestroyed()) {
                         viewer.baseLayerPicker.destroy();
@@ -127,11 +138,6 @@
                 case "Animation":
                     if (viewer.animation && !viewer.animation.isDestroyed()) {
                         viewer.animation.destroy();
-                    }
-                    break;
-                case "CreditsDisplay":
-                    if (viewer.creditsDisplay && !viewer.creditsDisplay.isDestroyed()) {
-                        viewer.creditsDisplay.destroy();
                     }
                     break;
                 case "Timeline":
