@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - 模型缩放</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>Model Scale</h2>
+        <span><strong>模型缩放</strong></span>
+        <div class="nowrap">
+            <button id="start">开始缩放</button>
+            <button id="stop">停止缩放</button>
+        </div>
+        <br>
+        <div class="nowrap">
+            <button id="findairplane">找到飞机</button>
+        </div>
+        <br>
+        <div class="nowrap">
+           已经设置默认视角在中国
+        </div>
+        <br>
+    </div>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script>
+        //设置默认视角在中国
+        var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
+        Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
+
+        var viewer = null;
+        var modelEntity = null;
+        var timer = null;
+
+        function initViewer() {
+            var terrainProvider = Cesium.createWorldTerrain({
+                requestWaterMask: false,
+                requestVertexNormals: true
+            });
+            var imageryViewModels = getImageryProviderViewModels();
+            viewer = new Cesium.Viewer('cesiumContainer', {
+                geocoder: false,
+                homeButton: false,
+                sceneModePicker: true,
+                fullscreenButton: true,
+                vrButton: true,
+                baseLayerPicker: true,
+                infoBox: false,
+                selectionIndicator: true,
+                animation: true,
+                timeline: true,
+                shouldAnimate: true,
+                navigationHelpButton: false,
+                navigationInstructionsInitiallyVisible: false,
+                mapProjection: new Cesium.WebMercatorProjection(),
+                showRenderLoopErrors: true,
+                imageryProvider: null,
+                terrainProvider: terrainProvider,
+                imageryProviderViewModels: imageryViewModels
+            });
+            viewer.scene.globe.enableLighting = false; //太阳光
+            viewer.sceneModePicker.viewModel.duration = 0.0; //去掉二三维切换动画效果
+            viewer.scene.globe.depthTestAgainstTerrain = true;
+
+
+            window.viewer = viewer;
+
+            viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
+            viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
+                ._creditContainer); //去掉版权信息
+        }
+
+        function loadGltfModel() {
+            var url = "../../SampleData/models/Cesium_Air/Cesium_Air.gltf";
+            var bData = {
+                position: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 15000.0),
+                model: {
+                    uri: url,
+                    scale: 1.0,
+                    maximumScale: 1000000,
+                    minimumPixelSize: 64
+                }
+            };
+            modelEntity = viewer.entities.add(bData);
+            viewer.trackedEntity = modelEntity;
+            viewer.flyTo(modelEntity);
+        }
+
+        function startResizeModelScale() {
+            if (timer) {
+                clearInterval(timer);
+            }
+            var scale = 1;
+            var max = 5;
+            var flag = true;
+            timer = setInterval(function () {
+                if (scale > max) {
+                    flag = false;
+                }
+                if (scale < 2) {
+                    flag = true;
+                }
+                if (flag) {
+                    scale += 1;
+                } else {
+                    scale -= 1;
+                }
+                modelEntity.model.scale = scale;
+            }, 50);
+        }
+
+        function getImageryProviderViewModels() {
+            //卫星影像、地形阴影、标准地图
+            var imageryViewModels = [];
+            imageryViewModels.push(new Cesium.ProviderViewModel({
+                name: '谷歌地图',
+                category: "卫星影像",
+                iconUrl: Cesium.buildModuleUrl('../../../../SampleData/images/google_satellite.png'),
+                tooltip: '谷歌地图-卫星影像',
+                creationFunction: function () {
+                    var urls = ["http://www.google.cn/maps/vt?lyrs=s,h&x={x}&y={y}&z={z}"];
+                    var providers = createBaseLayerProvider(urls);
+                    return providers;
+                }
+            }));
+            return imageryViewModels;
+        }
+
+        function createBaseLayerProvider(urls) {
+            var arr = [];
+            for (var i = 0; i < urls.length; i++) {
+                var url = urls[i];
+                var provider = new Cesium.UrlTemplateImageryProvider({
+                    url: url,
+                    credit: ''
+                });
+                arr.push(provider);
+            }
+            return arr;
+        }
+
+
+
+        $(".nowrap button").click(function () {
+            switch ($(this).attr("id")) {
+                case "start": //开始缩放
+                    viewer.trackedEntity = null;
+                    startResizeModelScale();
+                    break;
+                case "stop": //停止缩放
+                    if (timer) {
+                        clearInterval(timer);
+                    }
+                    break;
+                case "findairplane":
+                    viewer.flyTo(modelEntity);
+                    break;
+                default:
+                    break;
+            }
+        });
+        //获取视角
+        function getCamera() {
+            return {
+                position: viewer.camera.position,
+                heading: viewer.camera.heading,
+                pitch: viewer.camera.pitch
+            }
+        }
+
+
+
+        initViewer();
+        loadGltfModel();
+    </script>
+</body>
+
+</html>

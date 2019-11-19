@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - 第一人称漫游（沉浸式漫游）</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>第一人称漫游（沉浸式漫游）</h2>
+        <span><strong>flyTo</strong></span>
+        <div class="nowrap">
+            <button id="view-beijing-flyto">飞向目标</button>
+        </div>
+        <br>
+        <span><strong>漫游</strong></span>
+        <div class="nowrap">
+            <button id="startRoaming">开始漫游</button>
+            <button id="endRoaming">结束漫游</button>
+        </div>
+        <br>
+        <div class="nowrap">
+            <label>已经设置默认视角在中国天安门</label>
+        </div>
+        <br>
+    </div>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/GLE_Immersion_Roaming.js"></script>
+    <script>
+        var defaultOption = {
+            animation: false, //左下角控制动画            
+            baseLayerPicker: false, //右上角图层选择器            
+            fullscreenButton: false, //右下角全屏按钮          
+            geocoder: false, //右上角搜索   
+            sceneModePicker: false, //2d/3d切换     
+            homeButton: false, //home键，点击回到默认视角
+            infoBox: false, //点击模型不显示cesium自带的信息框
+            // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
+            selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
+            timeline: false, //最下面时间轴            
+            navigationHelpButton: false, //右上角帮助按钮 
+            navigationInstructionsInitiallyVisibl: false,
+            useDefaultRenderLoop: true,
+            showRenderLoopErrors: true,
+            projectionPicker: false, //投影选择器
+        };
+
+        //设置默认视角在中国
+        var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
+        Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
+
+        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
+
+        window.viewer = viewer;
+
+        viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
+        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
+            ._creditContainer); //去掉版权信息
+
+
+        var scene = viewer.scene;
+        if (!scene.pickPositionSupported) {
+            window.alert('This browser does not support pickPosition.');
+        }
+        //添加小车模型
+        var modelEntity = viewer.entities.add({
+            name: 'milktruck',
+            position: Cesium.Cartesian3.fromDegrees(116.39128053279518, 39.905887020699225, 0),
+            model: {
+                uri: '../../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
+                shadows: Cesium.ShadowMode.ENABLED,
+            }
+        });
+        //小车顶添加标签
+        var billboardEntity = viewer.entities.add({
+            name: '标签',
+            description: '这是一个标签',
+            position: new Cesium.Cartesian3(-2177787.326978273, 4388798.544097367, 4069977.44356009),
+            billboard: {
+                image: '../../assets/img/position.png',
+                width: 32,
+                height: 32,
+                pixelOffset: new Cesium.Cartesian2(0, -16) //cesium里z轴向上为正，但这是设置的是屏幕坐标偏移，y向下为正
+            }
+        });
+
+
+        //获取视角
+        function getCamera() {
+            return {
+                position: viewer.camera.position,
+                heading: viewer.camera.heading,
+                pitch: viewer.camera.pitch
+            }
+        }
+
+        $(".nowrap button").click(function () {
+            switch ($(this).attr("id")) {
+                case "view-beijing-flyto": //飞向目标
+                    // viewer.zoomTo(modelEntity);
+                    viewer.camera.flyTo({
+                        destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
+                            15.0),
+                        orientation: {
+                            heading: 6.283185307179586,
+                            pitch: -0.7853990085257001,
+                            roll: 0.0
+                        }
+                    });
+                    break;
+                case "startRoaming": //开始漫游
+                    initIR();
+                    break;
+                case "结束漫游": //开始漫游
+
+
+                    break;
+                default:
+                    break;
+            }
+        });
+    </script>
+</body>
+
+</html>

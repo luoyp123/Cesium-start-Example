@@ -81,7 +81,8 @@
             name: 'milktruck',
             position: Cesium.Cartesian3.fromDegrees(116.39128053279518, 39.905887020699225, 0),
             model: {
-                uri: '../../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb'
+                uri: '../../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
+                shadows: Cesium.ShadowMode.ENABLED,
             }
         });
         //小车顶添加标签
@@ -100,7 +101,7 @@
         var handler;
         var labelEntity = viewer.entities.add({
             label: {
-                name:"实时位置标签",
+                name: "实时位置标签",
                 show: false,
                 showBackground: true,
                 font: '14px monospace',
@@ -119,11 +120,11 @@
             var scene = viewer.scene;
             if (scene.mode !== Cesium.SceneMode.MORPHING) {
                 var pickedObject = scene.pick(movement.endPosition);
-                if (scene.pickPositionSupported && Cesium.defined(pickedObject) &&
+                if (scene.pickPositionSupported &&
+                    Cesium.defined(pickedObject) &&
                     pickedObject.id === modelEntity
                 ) {
                     var cartesian = viewer.scene.pickPosition(movement.endPosition);
-
                     if (Cesium.defined(cartesian)) {
                         // console.log(cartesian);
                         var cartographic = Cesium.Cartographic.fromCartesian(cartesian);

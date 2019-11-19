@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Cesium 入门示例 - 模板</title>
+    <title>Cesium 入门示例 - 地球自转（相机绕地球转）</title>
     <style>
-        @import url(../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
-        @import url(../css/index.css);
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
     </style>
 </head>
 
@@ -17,20 +17,24 @@
     <!-- Some input elements for our app. -->
     <div class="backdrop" id="menu">
         <div class="scrollbar"></div>
-        <h2>Viewer camera</h2>
+        <h2>地球自转（相机绕地球转）</h2>
         <span><strong>flyTo</strong></span>
         <div class="nowrap">
             <button id="view-beijing-flyto">飞向北京城</button>
         </div>
         <br>
         <div class="nowrap">
+            <button id="rotation">继续转起来</button>
+        </div>
+        <br>
+        <div class="nowrap">
             <button id="setCamera">已经设置默认视角在中国</button>
         </div>
-        <br>        
+        <br>
     </div>
-    <script src="../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
-    <script src="../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
-    <script src="../js/navigation.js"></script>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
     <script>
         var defaultOption = {
             animation: false, //左下角控制动画            
@@ -61,9 +65,24 @@
         viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
             ._creditContainer); //去掉版权信息
 
+
+        var isRotation = true;
+        var x = 113;
+        window.setInterval(function () {
+            if (!isRotation) return;
+            x += 0.3; //旋转速度
+            if (x >= 178.5) {
+                x = -180;
+            }
+            viewer.camera.setView({
+                destination: new Cesium.Cartesian3.fromDegrees(x, 30, 20000000),
+            });
+        });
+
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向北京城
+                    isRotation = false;
                     viewer.camera.flyTo({
                         destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 15000.0),
                         orientation: {
@@ -72,6 +91,9 @@
                             roll: 0.0 // default value
                         }
                     });
+                    break;
+                case "rotation"://继续转
+                    isRotation = true;
                     break;
                 default:
                     break;
