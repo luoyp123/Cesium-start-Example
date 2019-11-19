@@ -7,6 +7,10 @@ Cesium 入门示例
   - [Viewer 以及一些有用的组件](https://sogrey.github.io/Cesium-start-Example/examples/Viewer-some-helpful-widgets.html)
 - 相机
   - [视角，飞行到指定视角，设置默认视角](https://sogrey.github.io/Cesium-start-Example/examples/camera/view-beijing.html)
+  - [地球自转](https://sogrey.github.io/Cesium-start-Example/examples/camera/earth-rotation.html)
+  - [[未完成]第一人称漫游](https://sogrey.github.io/Cesium-start-Example/examples/camera/first-person-roaming.html)
+- 模型
+  - [模型缩放](https://sogrey.github.io/Cesium-start-Example/examples/model/ModelScale.html)
 - 添加视频
   - [视频融合](https://sogrey.github.io/Cesium-start-Example//examples/video/Video-Fusion.html)
 - 其他
