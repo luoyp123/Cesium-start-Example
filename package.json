@@ -20,7 +20,5 @@
   "bugs": {
     "url": "https://github.com/Sogrey/Cesium-start-Example/issues"
   },
-  "homepage": "https://github.com/Sogrey/Cesium-start-Example#readme",
-  "dependencies": {
-  }
+  "homepage": "https://github.com/Sogrey/Cesium-start-Example#readme"
 }
