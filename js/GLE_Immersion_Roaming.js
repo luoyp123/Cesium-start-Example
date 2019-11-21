@@ -15,11 +15,11 @@ var GLE_iUpSpeed = 2000; //控制跳起时的速度，重力加速度默认9.81�
 function initIR() {
     //获取当前相机位置，经纬度 - 设置漫游初始相机位置
     //获取相机世界坐标
-    var position = viewer.camera.position; 
+    var position = viewer.camera.position;
     //heading 弧度
     var heading = viewer.camera.heading;
     //弧度转角度
-    heading =radian2Angle(heading);
+    heading = radian2Angle(heading);
     //世界坐标转经纬度
     var degrees = cartesian3ToWgs84(position);
     //调整视角水平、高程为2米
