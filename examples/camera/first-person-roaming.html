@@ -182,17 +182,53 @@
                 var width = canvas.clientWidth;
                 var height = canvas.clientHeight;
 
+                var currentCamera = getCamera();
+                // if (Math.abs(mousePosition.x - startMousePosition.x) > Math.abs(mousePosition.y -
+                //         startMousePosition.y)) {
+                //     var x = (mousePosition.x - startMousePosition.x) / width;
+                //     //如果相机没有在2D模式下，则以弧度沿其上向量的相反方向围绕其右向量旋转
+                //     // camera.lookRight(x * lookFactor); //参数是弧度，这是转换成弧度
+                //     var heading = radian2Angle(currentCamera.heading) + radian2Angle(x * lookFactor);
+                //     viewer.camera.setView({
+                //         destination: currentCamera.position,
+                //         orientation: {
+                //             heading: Cesium.Math.toRadians(heading),
+                //             pitch: currentCamera.pitch,
+                //             roll: 0.0
+                //         }
+                //     });
+                // } else {
+                //     var y = -(mousePosition.y - startMousePosition.y) / height;
+                //     //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
+                //     // camera.lookUp(y * lookFactor);
+                //     var pitch = radian2Angle(currentCamera.pitch) + radian2Angle(y * lookFactor);
+                //     viewer.camera.setView({
+                //         destination: currentCamera.position,
+                //         orientation: {
+                //             heading: currentCamera.heading,
+                //             pitch: Cesium.Math.toRadians(pitch),
+                //             roll: 0.0
+                //         }
+                //     });
+                // }
 
-                if (Math.abs(mousePosition.x - startMousePosition.x) > Math.abs(mousePosition.y -
-                        startMousePosition.y)) {
-                    var x = (mousePosition.x - startMousePosition.x) / width;
-                    //如果相机没有在2D模式下，则以弧度沿其上向量的相反方向围绕其右向量旋转
-                    camera.lookRight(x * lookFactor); //参数是弧度，这是转换成弧度
-                } else {
-                    // var y = -(mousePosition.y - startMousePosition.y) / height;
-                    //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
-                    // camera.lookUp(y * lookFactor);
-                }
+                var x = (mousePosition.x - startMousePosition.x) / width;
+                var y = -(mousePosition.y - startMousePosition.y) / height;
+                //如果相机没有在2D模式下，则以弧度沿其上向量的相反方向围绕其右向量旋转
+                // camera.lookRight(x * lookFactor); //参数是弧度，这是转换成弧度
+                var heading = radian2Angle(currentCamera.heading) + radian2Angle(x * lookFactor);
+                //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
+                // camera.lookUp(y * lookFactor);
+                var pitch = radian2Angle(currentCamera.pitch) + radian2Angle(y * lookFactor);
+                viewer.camera.setView({
+                    destination: currentCamera.position,
+                    orientation: {
+                        heading: Cesium.Math.toRadians(heading),
+                        pitch: Cesium.Math.toRadians(pitch),
+                        roll: 0.0
+                    }
+                });
+
 
                 // var x = (mousePosition.x - startMousePosition.x) / width;
                 // var y = -(mousePosition.y - startMousePosition.y) / height;
