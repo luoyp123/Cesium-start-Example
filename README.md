@@ -8,6 +8,7 @@ Cesium 入门示例
 - 相机
   - [视角，飞行到指定视角，设置默认视角](https://sogrey.github.io/Cesium-start-Example/examples/camera/view-beijing.html)
   - [地球自转](https://sogrey.github.io/Cesium-start-Example/examples/camera/earth-rotation.html)
+  - [控制相机漫游](https://sogrey.github.io/Cesium-start-Example/examples/camera/camera-roaming.html)
   - [[未完成]第一人称漫游](https://sogrey.github.io/Cesium-start-Example/examples/camera/first-person-roaming.html)
 - 模型
   - [模型缩放](https://sogrey.github.io/Cesium-start-Example/examples/model/ModelScale.html)

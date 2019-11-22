@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
+    <!-- https://sandcastle.cesium.com/index.html?src=Camera%20Tutorial.html -->
+    <!-- https://blog.csdn.net/qq_25909453/article/details/84342005 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,16 +18,16 @@
     <!-- Some input elements for our app. -->
     <div class="backdrop" id="menu">
         <div class="scrollbar"></div>
-        <h2>第一人称漫游（沉浸式漫游）</h2>
+        <h2>漫游</h2>
         <span><strong>flyTo</strong></span>
         <div class="nowrap">
             <button id="view-beijing-flyto">上京城</button>
         </div>
         <br>
-        <span><strong>漫游</strong></span>
         <div class="nowrap">
-            <button id="startRoaming">开始漫游</button>
-            <button id="endRoaming">结束漫游</button>
+            按住鼠标左键移动调整视角方向<br>
+            按住键盘W前进|A左移|S后退|D右移<br>
+            按住键盘Q上升|E下降<br>
         </div>
         <br>
         <div class="nowrap">
@@ -38,7 +39,6 @@
     <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
     <script src="../../js/navigation.js"></script>
     <script src="../../js/coordinate-transformation.js"></script>
-    <script src="../../js/GLE_Immersion_Roaming.js"></script>
     <script>
         var defaultOption = {
             animation: false, //左下角控制动画            
@@ -182,24 +182,12 @@
                 var width = canvas.clientWidth;
                 var height = canvas.clientHeight;
 
-
-                if (Math.abs(mousePosition.x - startMousePosition.x) > Math.abs(mousePosition.y -
-                        startMousePosition.y)) {
-                    var x = (mousePosition.x - startMousePosition.x) / width;
-                    //如果相机没有在2D模式下，则以弧度沿其上向量的相反方向围绕其右向量旋转
-                    camera.lookRight(x * lookFactor); //参数是弧度，这是转换成弧度
-                } else {
-                    // var y = -(mousePosition.y - startMousePosition.y) / height;
-                    //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
-                    // camera.lookUp(y * lookFactor);
-                }
-
-                // var x = (mousePosition.x - startMousePosition.x) / width;
-                // var y = -(mousePosition.y - startMousePosition.y) / height;
-                // //如果相机没有在2D模式下，则以弧度沿其上向量的相反方向围绕其右向量旋转
-                // camera.lookRight(x * lookFactor); //参数是弧度，这是转换成弧度
-                // //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
-                // camera.lookUp(y * lookFactor);
+                var x = (mousePosition.x - startMousePosition.x) / width;
+                var y = -(mousePosition.y - startMousePosition.y) / height;
+                //如果相机没有在2D模式下，则以弧度沿其上向量的相反方向围绕其右向量旋转
+                camera.lookRight(x * lookFactor); //参数是弧度，这是转换成弧度
+                //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
+                camera.lookUp(y * lookFactor);
 
                 if (flags.moveForward) {
                     camera.moveForward(moveRate);
@@ -221,6 +209,7 @@
                 }
             }
         })
+
         //获取视角
         function getCamera() {
             return {
@@ -229,6 +218,8 @@
                 pitch: viewer.camera.pitch
             }
         }
+
+
 
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
@@ -243,13 +234,6 @@
                             roll: 0.0
                         }
                     });
-                    break;
-                case "startRoaming": //开始漫游
-                    initIR();
-                    break;
-                case "结束漫游": //开始漫游
-
-
                     break;
                 default:
                     break;

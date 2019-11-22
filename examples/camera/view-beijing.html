@@ -38,6 +38,14 @@
         <div class="nowrap">
             <button id="view-beijing-flyto-500-pitch45-heading45">面朝大海，春暖花开</button>
         </div>
+        <span><strong>HeadingPitchRange</strong></span>
+        <div class="nowrap">
+            <button id="HeadingPitchRange">看向北京城(朝向+heading | pith | roll)</button>
+        </div>
+        <span><strong>lookAt</strong></span>
+        <div class="nowrap">
+            <button id="lookAt">看向北京城(朝向+偏移)</button>
+        </div>        
         <span><strong>获取视角</strong></span>
         <div class="nowrap">
             <button id="getCamera">获取视角</button>
@@ -54,7 +62,7 @@
         <div class="nowrap">
             <button id="setCamera">已经设置默认视角在中国</button>
         </div>
-        <br>        
+        <br>
     </div>
     <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
@@ -79,6 +87,10 @@
         var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
 
         window.viewer = viewer;
+
+        viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
+        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
+            ._creditContainer); //去掉版权信息
 
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
@@ -141,6 +153,17 @@
                             roll: 0.0 // default value
                         }
                     });
+                    break;
+                case "lookAt":
+                    var center = Cesium.Cartesian3.fromDegrees(116.39, 39.9);
+                    viewer.camera.lookAt(center, new Cesium.Cartesian3(0.0, -4790000.0, 3930000.0));
+                    break;
+                case "HeadingPitchRange":
+                    var center = Cesium.Cartesian3.fromDegrees(116.39, 39.9);
+                    var heading = Cesium.Math.toRadians(50.0);
+                    var pitch = Cesium.Math.toRadians(-20.0);
+                    var range = 5000.0;
+                    viewer.camera.lookAt(center, new Cesium.HeadingPitchRange(heading, pitch, range));
                     break;
                 case "getCamera": //获取视角
                     var cameraView = getCamera();
