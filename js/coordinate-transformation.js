@@ -60,6 +60,25 @@ function cartographicToCartesian3Three(longitude, latitude, height) {
     return Cesium.Cartesian3.fromRadians(longitude, latitude, height, scene.globe.ellipsoid);
 }
 //#endregion
+/**
+ * 获取相机水平面上投影朝向
+ * @param {Cesium.Camera} camera 相机
+ */
+function getHorizontalDirection(camera, result) {
+    if (!defined(result)) {
+        result = new Cesium.Cartesian3();
+    }
+    var direction = camera.direction;
+    var position = camera.position;
+    var pitch = camera.pitch;
+
+    camera.look(camera.right, pitch);
+    Cesium.Cartesian3.clone(camera.direction, result) ;    
+    camera.look(camera.right, -1*pitch);
+
+    Cesium.Cartesian3.normalize(result, result);
+    return result;
+}
 
 
 var PI = 3.1415926535897932384626;
