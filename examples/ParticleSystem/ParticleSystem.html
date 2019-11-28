@@ -9,6 +9,14 @@
     <style>
         @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
         @import url(../../css/index.css);
+
+        .dg.main {
+            width: 300px !important;
+        }
+
+        .dg.main>.close-button {
+            width: 300px !important;
+        }
     </style>
 </head>
 
@@ -24,7 +32,7 @@
         <br>
         <span><strong>天气</strong></span>
         <div class="nowrap">
-            <button id="rain">雨</button> <button id="snow">雪</button> <button id="fog">雾</button>
+            <button id="rain">雨</button> <button id="snow">雪</button> <!--<button id="fog">雾</button>-->
         </div>
         <span><strong>特效</strong></span>
         <div class="nowrap">
@@ -36,52 +44,38 @@
         </div>
         <br>
     </div>
+    <div id="dat-gui" style="position: absolute;top: 10px;right: 10px;width: 300px;">
+    </div>
     <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
     <script src="../../js/navigation.js"></script>
     <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/API.js"></script>
     <script src="../../js/GLE_ParticleSystem.js"></script>
+    <script src="../../js/DAT.GUI.min.js"></script>
     <script>
         var defaultOption = {
-            animation: false, //左下角控制动画            
-            baseLayerPicker: false, //右上角图层选择器            
-            fullscreenButton: false, //右下角全屏按钮          
-            geocoder: false, //右上角搜索   
-            sceneModePicker: false, //2d/3d切换     
-            homeButton: false, //home键，点击回到默认视角
-            infoBox: false, //点击模型不显示cesium自带的信息框
-            // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
-            selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
-            timeline: false, //最下面时间轴            
-            navigationHelpButton: false, //右上角帮助按钮 
-            navigationInstructionsInitiallyVisibl: false,
-            useDefaultRenderLoop: true,
-            showRenderLoopErrors: true,
-            projectionPicker: false, //投影选择器
-            shouldAnimate: true,
-            // terrainProvider: Cesium.createWorldTerrain(),//开启地形之后，地形有了海拔高度，之前没开地形是添加的车子陷入地下
+            // animation: false, //左下角控制动画            
+            // baseLayerPicker: false, //右上角图层选择器            
+            // fullscreenButton: false, //右下角全屏按钮          
+            // geocoder: false, //右上角搜索   
+            // sceneModePicker: false, //2d/3d切换     
+            // homeButton: false, //home键，点击回到默认视角
+            // infoBox: false, //点击模型不显示cesium自带的信息框
+            // // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
+            // selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
+            // timeline: false, //最下面时间轴            
+            // navigationHelpButton: false, //右上角帮助按钮 
+            // navigationInstructionsInitiallyVisibl: false,
+            // useDefaultRenderLoop: true,
+            // showRenderLoopErrors: true,
+            // projectionPicker: false, //投影选择器
+            // shouldAnimate: true,
+            // // terrainProvider: Cesium.createWorldTerrain(),//开启地形之后，地形有了海拔高度，之前没开地形是添加的车子陷入地下
         };
-
-        //设置默认视角在中国
-        var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
-        Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
-
-        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
-
-        window.viewer = viewer;
-
-        viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件-后面已设置失效
-        // viewer._cesiumWidget.cesiumNavigation:CesiumNavigation
-
-        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
-            ._creditContainer); //去掉版权信息
-
-        var scene = viewer.scene;
-        if (!scene.pickPositionSupported) {
-            window.alert('This browser does not support pickPosition.');
-        }
+        var api = new API("cesiumContainer", defaultOption);
         //添加小车模型
-        var modelEntity = viewer.entities.add({
+        var modelEntity = api.viewer.entities.add({
             name: 'milktruck',
             position: Cesium.Cartesian3.fromDegrees(116.39128053279518, 39.905887020699225, 0),
             model: {
@@ -90,12 +84,12 @@
             }
         });
         //小车顶添加标签
-        var billboardEntity = viewer.entities.add({
+        var billboardEntity = api.viewer.entities.add({
             name: '标签',
             description: '这是一个标签',
             position: new Cesium.Cartesian3(-2177787.326978273, 4388798.544097367, 4069977.44356009),
             billboard: {
-                image: '../../assets/img/position.png',
+                image: '../../assets/img/local.png',
                 width: 32,
                 height: 32,
                 pixelOffset: new Cesium.Cartesian2(0, -16) //cesium里z轴向上为正，但这是设置的是屏幕坐标偏移，y向下为正
@@ -105,55 +99,31 @@
         //如果应针对地形表面对广告牌，折线，标签等图元进行深度测试，则为True，
         //否则应始终在地形顶部绘制此类图元（除非它们位于地球的另一侧），则为false。
         //对地形进行深度测试的缺点是，轻微的数字噪声或地形细节级别的切换有时会使在表面上消失的图元消失。
-        scene.globe.depthTestAgainstTerrain = true;
+        api.globe.depthTestAgainstTerrain = true;
 
-
-
-
-
-
-        // // button
-        // // Sandcastle.addToolbarButton('Reset Camera', resetCameraFunction);
-
-        // // drop down
-        // var options = [{
-        //     text: 'Snow',
-        //     onselect: function () {
-        //         rainSystem.show = false;
-        //         snowSystem.show = true;
-
-        //         scene.skyAtmosphere.hueShift = -0.8;
-        //         scene.skyAtmosphere.saturationShift = -0.7;
-        //         scene.skyAtmosphere.brightnessShift = -0.33;
-
-        //         scene.fog.density = 0.001;
-        //         scene.fog.minimumBrightness = 0.8;
-        //     }
-        // }, {
-        //     text: 'Rain',
-        //     onselect: function () {
-        //         rainSystem.show = true;
-        //         snowSystem.show = false;
-
-        //         scene.skyAtmosphere.hueShift = -0.97;
-        //         scene.skyAtmosphere.saturationShift = 0.25;
-        //         scene.skyAtmosphere.brightnessShift = -0.4;
-
-        //         scene.fog.density = 0.00025;
-        //         scene.fog.minimumBrightness = 0.01;
-        //     }
-        // }];
-        // // Sandcastle.addToolbarMenu(options);
+        api.viewer.camera.setView({
+            destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
+                15.0),
+            orientation: {
+                heading: Cesium.Math.toRadians(0.0),
+                pitch: Cesium.Math.toRadians(-45.0),
+                roll: 0.0
+            }
+        });
 
         var rainSystem, snowSystem, fireSystem, smokeSystem;
 
         $(".nowrap button").click(function () {
+            if (rainSystem) rainSystem.show = false;
+            if (snowSystem) snowSystem.show = false;
+            if (fireSystem) fireSystem.show = false;
+            if (smokeSystem) smokeSystem.show = false;
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向目标
                     // viewer.zoomTo(modelEntity);
-                    viewer.camera.flyTo({
+                    api.viewer.camera.flyTo({
                         destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
-                            1500.0),
+                            15.0),
                         orientation: {
                             heading: Cesium.Math.toRadians(0.0),
                             pitch: Cesium.Math.toRadians(-45.0),
@@ -162,20 +132,18 @@
                     });
                     break;
                 case "rain":
-                    if (snowSystem) snowSystem.show = false;
+                    api.scene.skyAtmosphere.hueShift = -0.97;
+                    api.scene.skyAtmosphere.saturationShift = 0.25;
+                    api.scene.skyAtmosphere.brightnessShift = -0.4;
+
+                    api.scene.fog.density = 0.00025;
+                    api.scene.fog.minimumBrightness = 0.01;
                     if (rainSystem) {
                         rainSystem.show = true;
-
-                        scene.skyAtmosphere.hueShift = -0.97;
-                        scene.skyAtmosphere.saturationShift = 0.25;
-                        scene.skyAtmosphere.brightnessShift = -0.4;
-
-                        scene.fog.density = 0.00025;
-                        scene.fog.minimumBrightness = 0.01;
                     } else {
                         // rain
                         var rainParticleSize = 15.0;
-                        var rainRadius = 100000.0;
+                        var rainRadius = 1000.0;
                         var rainImageSize = new Cesium.Cartesian2(rainParticleSize, rainParticleSize * 2.0);
 
                         var rainGravityScratch = new Cesium.Cartesian3();
@@ -205,46 +173,44 @@
                             lifetime: 15.0,
                             emitter: new Cesium.SphereEmitter(rainRadius),
                             startScale: 1.0,
-                            endScale: 0.0,
+                            endScale: 0.5,
                             image: '../../assets/img/circular_particle.png',
                             emissionRate: 9000.0,
-                            startColor: new Cesium.Color(0.27, 0.5, 0.70, 0.0),
-                            endColor: new Cesium.Color(0.27, 0.5, 0.70, 0.98),
+                            startColor: new Cesium.Color(0.27, 0.6, 0.80, 0.5),
+                            endColor: new Cesium.Color(0.27, 0.6, 0.80, 1.0),
                             imageSize: rainImageSize,
                             updateCallback: rainUpdate
                         });
 
-                        scene.primitives.add(rainSystem);
+                        api.scene.primitives.add(rainSystem);
                     }
 
                     break;
                 case "snow":
-                    if (rainSystem) rainSystem.show = false;
+                    api.scene.skyAtmosphere.hueShift = -0.8;
+                    api.scene.skyAtmosphere.saturationShift = -0.7;
+                    api.scene.skyAtmosphere.brightnessShift = -0.33;
+
+                    api.scene.fog.density = 0.001;
+                    api.scene.fog.minimumBrightness = 0.8;
                     if (snowSystem) {
                         snowSystem.show = true;
-
-                        scene.skyAtmosphere.hueShift = -0.8;
-                        scene.skyAtmosphere.saturationShift = -0.7;
-                        scene.skyAtmosphere.brightnessShift = -0.33;
-
-                        scene.fog.density = 0.001;
-                        scene.fog.minimumBrightness = 0.8;
                     } else {
                         // snow
-                        var snowParticleSize = 12.0;
-                        var snowRadius = 100000.0;
-                        var minimumSnowImageSize = new Cesium.Cartesian2(snowParticleSize, snowParticleSize);
-                        var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSize * 2.0,
-                            snowParticleSize * 2.0);
+                        var snowParticleSizeMin = 12.0;
+                        var snowParticleSizeMax = snowParticleSizeMin * 2.0;
+                        var snowRadius = 1000.0;
+                        var minimumSnowImageSize = new Cesium.Cartesian2(snowParticleSizeMin,
+                            snowParticleSizeMin);
+                        var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSizeMax,
+                            snowParticleSizeMax);
 
                         var snowGravityScratch = new Cesium.Cartesian3();
                         var snowUpdate = function (particle, dt) {
                             snowGravityScratch = Cesium.Cartesian3.normalize(particle.position,
                                 snowGravityScratch);
                             Cesium.Cartesian3.multiplyByScalar(snowGravityScratch, Cesium.Math
-                                .randomBetween(-
-                                    30.0, -300.0),
-                                snowGravityScratch);
+                                .randomBetween(-30.0, -300.0), snowGravityScratch);
                             particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch,
                                 particle.velocity);
 
@@ -254,73 +220,423 @@
                                 particle.endColor.alpha = 0.0;
                             } else {
                                 particle.endColor.alpha = snowSystem.endColor.alpha / (distance /
-                                    snowRadius +
-                                    0.1);
+                                    snowRadius + 0.1);
                             }
                         };
 
                         snowSystem = new Cesium.ParticleSystem({
                             modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position),
-                            minimumSpeed: -1.0,
+                            minimumSpeed: -0.1,
                             maximumSpeed: 0.0,
-                            lifetime: 15.0,
+                            lifetime: 20.0,
                             emitter: new Cesium.SphereEmitter(snowRadius),
                             startScale: 0.5,
-                            endScale: 1.0,
+                            endScale: 2.0,
                             image: '../../assets/img/snowflake_particle.png',
-                            emissionRate: 7000.0,
-                            startColor: Cesium.Color.WHITE.withAlpha(0.0),
+                            emissionRate: 9000.0,
+                            startColor: Cesium.Color.WHITE.withAlpha(0.3),
                             endColor: Cesium.Color.WHITE.withAlpha(1.0),
                             minimumImageSize: minimumSnowImageSize,
                             maximumImageSize: maximumSnowImageSize,
                             updateCallback: snowUpdate
                         });
-                        scene.primitives.add(snowSystem);
+                        api.scene.primitives.add(snowSystem);
                     }
                     break;
                 case "fog":
+                    // var fog = new Cesium.Fog();
+                    // fog.density   = 20;
+                    // fog.enabled  =true;
+                    // scene.fog = fog
                     break;
                 case "fire":
-                    fireSystem = new Cesium.ParticleSystem({
-                        minimumSpeed: -1.0,
-                        maximumSpeed: 0.0,
-                        image: '../../assets/img/fire.png',
-                        emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(30.0)),
-                        startColor: Cesium.Color.WHITE.withAlpha(0.0),
-                        endColor: Cesium.Color.YELLOW.withAlpha(1.0),
-                        startScale: 1.0,
-                        endScale: 4.0,
-                        particleLife: 1.0,
-                        speed: 5.0,
-                        imageSize: new Cesium.Cartesian2(20, 20),
-                        emissionRate: 5.0,
-                        lifetime: 16.0,
-                        // modelMatrix: computeModelMatrix(entity, Cesium.JulianDate.now()),
-                    });
-                    scene.primitives.add(fireSystem);
+                    if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                        fireSystem.show = true;
+                    } else {
+                        fireSystem = new Cesium.ParticleSystem({
+                            //贴图
+                            image: '../../assets/img/fire.png',
 
-                    // emitterModelMatrix : computeEmitterModelMatrix()
+                            //粒子发射器 锥形发射器
+                            emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(20.0)),
+
+                            //颜色
+                            // color:Cesium.Color.RED,
+                            startColor: Cesium.Color.YELLOW.withAlpha(0.5),
+                            endColor: Cesium.Color.DARKORANGE.withAlpha(0.7),
+
+                            //尺寸
+                            startScale: 1.0,
+                            endScale: 4.0,
+                            // imageSize: new Cesium.Cartesian2(40, 40),//图片尺寸
+                            minimumImageSize: new Cesium.Cartesian2(20.0, 20.0),
+                            maximumImageSize: new Cesium.Cartesian2(40.0, 40.0),
+
+                            //粒子生命周期
+                            lifetime: 16.0,
+                            loop: true,
+                            // particleLife: 15.0,
+                            // minimumParticleLife: 10.0,
+                            // maximumParticleLife: 20.0,
+
+                            //速度
+                            // speed: 5.0,
+                            minimumSpeed: 1.0,
+                            maximumSpeed: 3.0,
+
+                            //粒子产生速率  
+                            emissionRate: 15.0,
+
+                            //粒子发生位置
+                            modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
+                            // modelEntity.computeModelMatrix(viewer.clock.startTime,
+                            //     new Cesium.Matrix4()
+                            // ),
+                            //粒子发射器位置矩阵
+                            emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
+                        });
+                        api.scene.primitives.add(fireSystem);
+                    }
                     break;
                 case "smoke":
-                    smokeSystem = new Cesium.ParticleSystem({
-                        // modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position),
-                        minimumSpeed: -1.0,
-                        maximumSpeed: 0.0,
-                        lifetime: 15.0,
-                        startScale: 0.5,
-                        endScale: 1.0,
-                        image: '../../assets/img/smoke.png',
-                        emissionRate: 50.0,
-                        emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(30.0)),
-                        startColor: Cesium.Color.WHITE.withAlpha(0.0),
-                        endColor: Cesium.Color.YELLO.withAlpha(1.0),
-                    });
-                    scene.primitives.add(smokeSystem);
+                    if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                        smokeSystem.show = true;
+                    } else {
+                        smokeSystem = new Cesium.ParticleSystem({
+                            //贴图
+                            image: '../../assets/img/smoke.png',
+
+                            //粒子发射器 锥形发射器
+                            emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(20.0)),
+
+                            //颜色
+                            startColor: Cesium.Color.BLACK.withAlpha(0.7),
+                            endColor: Cesium.Color.BLACK.withAlpha(0.2),
+
+                            //尺寸
+                            startScale: 1.0,
+                            endScale: 6.0,
+                            // imageSize: new Cesium.Cartesian2(40, 40),//图片尺寸
+                            minimumImageSize: new Cesium.Cartesian2(20.0, 20.0),
+                            maximumImageSize: new Cesium.Cartesian2(40.0, 40.0),
+
+                            //粒子生命周期
+                            lifetime: 40.0,
+                            loop: true, //是否循环，
+                            // particleLife: 15.0,
+                            // minimumParticleLife: 10.0,
+                            // maximumParticleLife: 20.0,
+
+                            //速度
+                            // speed: 5.0,
+                            minimumSpeed: 0.5,
+                            maximumSpeed: 1.5,
+
+                            //粒子产生速率  
+                            emissionRate: 10.0,
+
+                            //粒子发生位置
+                            modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
+                            //粒子发射器位置矩阵
+                            emitterModelMatrix: computeEmitterModelMatrix(1, 1, 1), //设置偏移为0
+                        });
+                        api.scene.primitives.add(smokeSystem);
+                    }
                     break;
                 default:
                     break;
             }
         });
+
+
+
+        var DatGuiConfig = {
+            rain: {
+                show: false,
+                scene: {
+                    skyAtmosphere: {
+                        hueShift: -0.97,
+                        saturationShift: 0.25,
+                        brightnessShift: -0.4,
+                    },
+                    fog: {
+                        density: 0.00025,
+                        minimumBrightness: 0.01,
+                    }
+                },
+                rainParticleSize: 15.0,
+                rainRadius: 100000.0,
+                speed: -1.0,
+                lifetime: 15.0,
+                startScale: 1.0,
+                endScale: 0.0,
+                emissionRate: 9000.0,
+                // startColor: new Cesium.Color(0.27, 0.5, 0.70, 0.0),
+                // endColor: new Cesium.Color(0.27, 0.5, 0.70, 0.98),
+            },
+            snow: {
+                show: false,
+                scene: {
+                    skyAtmosphere: {
+                        hueShift: -0.8,
+                        saturationShift: -0.7,
+                        brightnessShift: -0.33,
+                    },
+                    fog: {
+                        density: 0.001,
+                        minimumBrightness: 0.8,
+                    }
+                },
+                snowParticleSizeMin: 12.0,
+                snowParticleSizeMax: 24.0,
+                snowRadius: 100000.0,
+                minimumSpeed: -1.0,
+                maximumSpeed: 0.0,
+                lifetime: 15.0,
+                startScale: 0.5,
+                endScale: 1.0,
+                // image: '../../assets/img/snowflake_particle.png',
+                emissionRate: 7000.0,
+                // startColor: Cesium.Color.WHITE.withAlpha(0.0),
+                // endColor: Cesium.Color.WHITE.withAlpha(1.0),
+            },
+            fire: {
+                show: false,
+                emitterRadius: 20.0,
+                // startColor: Cesium.Color.YELLOW.withAlpha(0.5),
+                // endColor: Cesium.Color.DARKORANGE.withAlpha(0.7),
+                startScale: 1.0,
+                endScale: 4.0,
+                minimumImageSize: 20.0,
+                maximumImageSize: 40.0,
+                lifetime: 16.0,
+                loop: true,
+                minimumSpeed: 1.0,
+                maximumSpeed: 3.0,
+                emissionRate: 15.0,
+                positionXOffset: 0.0,
+                positionYOffset: 0.0,
+                positionZOffset: 0.0,
+            },
+            smoke: {
+                show: false,
+                emitterRadius: 20.0,
+                // startColor: Cesium.Color.BLACK.withAlpha(0.7),
+                // endColor: Cesium.Color.BLACK.withAlpha(0.2),
+                startScale: 1.0,
+                endScale: 6.0,
+                minimumImageSize: 20.0,
+                maximumImageSize: 40.0,
+                lifetime: 40.0,
+                loop: true,
+                minimumSpeed: 0.5,
+                maximumSpeed: 1.5,
+                emissionRate: 10.0,
+                positionXOffset: 0.0,
+                positionYOffset: 0.0,
+                positionZOffset: 0.0,
+            }
+        };
+
+
+
+        var gui = new dat.GUI({
+            autoPlace: false
+        });
+        // var rainGui = gui.addFolder('雨');
+        // rainGui.add(DatGuiConfig.rain, 'show');
+        // rainGui.add(DatGuiConfig.rain.scene.skyAtmosphere, 'hueShift');
+        // rainGui.add(DatGuiConfig.rain.scene.skyAtmosphere, 'saturationShift');
+        // rainGui.add(DatGuiConfig.rain.scene.skyAtmosphere, 'brightnessShift');
+        // rainGui.add(DatGuiConfig.rain.scene.fog, 'density');
+        // rainGui.add(DatGuiConfig.rain.scene.fog, 'minimumBrightness');
+        // rainGui.add(DatGuiConfig.rain, 'rainParticleSize');
+        // rainGui.add(DatGuiConfig.rain, 'rainRadius');
+        // rainGui.add(DatGuiConfig.rain, 'speed');
+        // rainGui.add(DatGuiConfig.rain, 'lifetime');
+        // rainGui.add(DatGuiConfig.rain, 'startScale');
+        // rainGui.add(DatGuiConfig.rain, 'endScale');
+
+        // var snowGui = gui.addFolder('雪');
+        // snowGui.add(DatGuiConfig.snow, 'show');
+        // snowGui.add(DatGuiConfig.snow.scene.skyAtmosphere, 'hueShift');
+        // snowGui.add(DatGuiConfig.snow.scene.skyAtmosphere, 'saturationShift');
+        // snowGui.add(DatGuiConfig.snow.scene.skyAtmosphere, 'brightnessShift');
+        // snowGui.add(DatGuiConfig.snow.scene.fog, 'density');
+        // snowGui.add(DatGuiConfig.snow.scene.fog, 'minimumBrightness');
+        // snowGui.add(DatGuiConfig.snow, 'snowParticleSizeMin');
+        // snowGui.add(DatGuiConfig.snow, 'snowParticleSizeMax');
+        // snowGui.add(DatGuiConfig.snow, 'snowRadius');
+        // snowGui.add(DatGuiConfig.snow, 'minimumSpeed');
+        // snowGui.add(DatGuiConfig.snow, 'maximumSpeed');
+        // snowGui.add(DatGuiConfig.snow, 'startScale');
+        // snowGui.add(DatGuiConfig.snow, 'endScale');
+        // snowGui.add(DatGuiConfig.snow, 'emissionRate');
+        // // snowGui.add(DatGuiConfig.snow, 'startColor');
+        // // snowGui.add(DatGuiConfig.snow, 'endColor');
+
+        var fireGui = gui.addFolder('火焰');
+        (fireGui.add(DatGuiConfig.fire, 'show')).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.show = value;
+            } else {
+                window.alert("请先创建火焰粒子。");
+                DatGuiConfig.fire.show = false;
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'emitterRadius', 0, 30)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.emitter = new Cesium.ConeEmitter(Cesium.Math.toRadians(value));
+            }
+        });
+        // fireGui.add(DatGuiConfig.fire, 'startColor');
+        // fireGui.add(DatGuiConfig.fire, 'endColor');
+        (fireGui.add(DatGuiConfig.fire, 'startScale', 0, 5)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.startScale = value;
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'endScale', 0, 5)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.endScale = value;
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'minimumImageSize', 0, 40)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.minimumImageSize = new Cesium.Cartesian2(value, value);
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'maximumImageSize', 0, 40)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.maximumImageSize = new Cesium.Cartesian2(value, value);
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'lifetime', 5, 20)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.lifetime = value;
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'loop')).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.loop = value;
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'minimumSpeed', 0.1, 5.0)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.minimumSpeed = value;
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'maximumSpeed', 0.1, 5.0)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.maximumSpeed = value;
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'emissionRate', 1, 20)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.emissionRate = value;
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'positionXOffset', -10, 10)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.emitterModelMatrix = computeEmitterModelMatrix(value, DatGuiConfig.fire
+                    .positionYOffset, DatGuiConfig.fire.positionZOffset); //设置偏移为0
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'positionYOffset', -10, 10)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.emitterModelMatrix = computeEmitterModelMatrix(DatGuiConfig.fire.positionXOffset,
+                    value, DatGuiConfig.fire.positionZOffset); //设置偏移为0
+            }
+        });
+        (fireGui.add(DatGuiConfig.fire, 'positionZOffset', -10, 10)).onChange(function (value) {
+            if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
+                fireSystem.emitterModelMatrix = computeEmitterModelMatrix(DatGuiConfig.fire.positionXOffset,
+                    DatGuiConfig.fire.positionYOffset, value); //设置偏移为0
+            }
+        });
+
+        var smokeGui = gui.addFolder('烟雾');
+        (smokeGui.add(DatGuiConfig.smoke, 'show')).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.show = value;
+            } else {
+                window.alert("请先创建烟雾粒子。");
+                DatGuiConfig.fire.show = false;
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'emitterRadius', 0, 30)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.emitter = new Cesium.ConeEmitter(Cesium.Math.toRadians(value));
+            }
+        });
+        // smokeGui.add(DatGuiConfig.smoke, 'startColor');
+        // smokeGui.add(DatGuiConfig.smoke, 'endColor');
+        (smokeGui.add(DatGuiConfig.smoke, 'startScale', 0, 5)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.startScale = value;
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'endScale', 0, 5)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.endScale = value;
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'minimumImageSize', 0, 40)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.minimumImageSize = new Cesium.Cartesian2(value, value);
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'maximumImageSize', 0, 40)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.maximumImageSize = new Cesium.Cartesian2(value, value);
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'lifetime', 5, 20)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.lifetime = value;
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'loop')).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.loop = value;
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'minimumSpeed', 0.1, 5.0)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.minimumSpeed = value;
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'maximumSpeed', 0.1, 5.0)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.maximumSpeed = value;
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'emissionRate', 1, 20)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.emissionRate = value;
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'positionXOffset', -10, 10)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.emitterModelMatrix = computeEmitterModelMatrix(value, DatGuiConfig.smoke
+                    .positionYOffset, DatGuiConfig.smoke.positionZOffset); //设置偏移为0
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'positionYOffset', -10, 10)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.emitterModelMatrix = computeEmitterModelMatrix(DatGuiConfig.smoke.positionXOffset,
+                    value, DatGuiConfig.smoke.positionZOffset); //设置偏移为0
+            }
+        });
+        (smokeGui.add(DatGuiConfig.smoke, 'positionZOffset', -10, 10)).onChange(function (value) {
+            if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
+                smokeSystem.emitterModelMatrix = computeEmitterModelMatrix(DatGuiConfig.smoke.positionXOffset,
+                    DatGuiConfig.smoke.positionYOffset, value); //设置偏移为0
+            }
+        });
+
+        var customContainer = document.getElementById('dat-gui');
+        customContainer.appendChild(gui.domElement);
     </script>
 </body>
 

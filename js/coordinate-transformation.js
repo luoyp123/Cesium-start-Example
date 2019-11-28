@@ -2,6 +2,15 @@
 function defined(value) {
     return value !== undefined && value !== null;
 }
+
+function getCamera() {
+    return {
+        position: this.viewer.camera.position, //位置
+        direction: this.viewer.camera.direction, //方向
+        heading: this.viewer.camera.heading, //航向角
+        pitch: this.viewer.camera.pitch //俯仰角
+    }
+}
 /**
  * 弧度转角度
  */
@@ -73,13 +82,50 @@ function getHorizontalDirection(camera, result) {
     var pitch = camera.pitch;
 
     camera.look(camera.right, pitch);
-    Cesium.Cartesian3.clone(camera.direction, result) ;    
-    camera.look(camera.right, -1*pitch);
+    Cesium.Cartesian3.clone(camera.direction, result);
+    camera.look(camera.right, -1 * pitch);
 
     Cesium.Cartesian3.normalize(result, result);
     return result;
 }
 
+/**
+ * 计算当前时间点飞机模型的位置矩阵
+ * @param {Cesium.Entity} entity 3D实体
+ * @param {Number} time 时间
+ */
+function computeModelMatrix(entity, time) {
+    //获取位置
+    var position = Cesium.Property.getValueOrUndefined(entity.position, time, new Cesium.Cartesian3());
+    if (!Cesium.defined(position)) {
+        return undefined;
+    }
+    //获取方向
+    var modelMatrix;
+    var orientation = Cesium.Property.getValueOrUndefined(entity.orientation, time, new Cesium.Quaternion());
+    if (!Cesium.defined(orientation)) {
+        modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(position, undefined, new Cesium.Matrix4());
+    } else {
+        modelMatrix = Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromQuaternion(orientation, new Cesium.Matrix3()), position, new Cesium.Matrix4());
+    }
+    return modelMatrix;
+}
+/**
+ * 计算引擎(粒子发射器)位置矩阵
+ * @param {Number} xOffset
+ * @param {Number} yOffset
+ * @param {Number} zOffset
+ */
+function computeEmitterModelMatrix(xOffset, yoffset, zOffset) {
+    //方向
+    var hpr = Cesium.HeadingPitchRoll.fromDegrees(0.0, 0.0, 0.0, new Cesium.HeadingPitchRoll());
+    var trs = new Cesium.TranslationRotationScale();
+
+    //以modelMatrix(飞机)中心为原点的坐标系的xyz轴位置偏移
+    Cesium.Cartesian3.fromElements(xOffset, yoffset, zOffset, trs.translation);
+    Cesium.Quaternion.fromHeadingPitchRoll(hpr, trs.rotation);
+    return Cesium.Matrix4.fromTranslationRotationScale(trs, new Cesium.Matrix4());
+}
 
 var PI = 3.1415926535897932384626;
 var a = 6378245.0;

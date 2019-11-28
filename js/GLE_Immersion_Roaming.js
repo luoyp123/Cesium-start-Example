@@ -1,3 +1,10 @@
+/***
+ * 第一人称漫游（沉浸式漫游）
+ * @nanme Sogrey
+ * 
+ * @version v1
+ */
+
 var lookFactor = .05; //调整视角速度
 var moveRate = .1; //移动速度
 var footerHeight = 2.0; //相机距地2.0米高度
@@ -200,7 +207,7 @@ function ImmersionRoamingStart() {
 /**
  * 结束漫游
  */
-function ImmersionRoamingEnd() {
+function ImmersionRoamingStop() {
     //重新启用空间相机控制器默认动作
     setIRConfig(true);
 

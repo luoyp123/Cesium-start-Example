@@ -46,47 +46,30 @@
     <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
     <script src="../../js/navigation.js"></script>
+    <script src="../../js/API.js"></script>
     <script src="../../js/coordinate-transformation.js"></script>
     <script src="../../js/GLE_Immersion_Roaming.js"></script>
     <script>
         var defaultOption = {
-            animation: false, //左下角控制动画            
-            baseLayerPicker: false, //右上角图层选择器            
-            fullscreenButton: false, //右下角全屏按钮          
-            geocoder: false, //右上角搜索   
-            sceneModePicker: false, //2d/3d切换     
-            homeButton: false, //home键，点击回到默认视角
-            infoBox: false, //点击模型不显示cesium自带的信息框
-            // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
-            selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
-            timeline: false, //最下面时间轴            
-            navigationHelpButton: false, //右上角帮助按钮 
-            navigationInstructionsInitiallyVisibl: false,
-            useDefaultRenderLoop: true,
-            showRenderLoopErrors: true,
-            projectionPicker: false, //投影选择器
+            // animation: false, //左下角控制动画            
+            // baseLayerPicker: false, //右上角图层选择器            
+            // fullscreenButton: false, //右下角全屏按钮          
+            // geocoder: false, //右上角搜索   
+            // sceneModePicker: false, //2d/3d切换     
+            // homeButton: false, //home键，点击回到默认视角
+            // infoBox: false, //点击模型不显示cesium自带的信息框
+            // // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
+            // selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
+            // timeline: false, //最下面时间轴            
+            // navigationHelpButton: false, //右上角帮助按钮 
+            // navigationInstructionsInitiallyVisibl: false,
+            // useDefaultRenderLoop: true,
+            // showRenderLoopErrors: true,
+            // projectionPicker: false, //投影选择器
         };
-
-        //设置默认视角在中国
-        var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
-        Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
-
-        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
-
-        window.viewer = viewer;
-
-        // viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件-后面已设置失效
-        // viewer._cesiumWidget.cesiumNavigation:CesiumNavigation
-
-        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
-            ._creditContainer); //去掉版权信息
-
-        var scene = viewer.scene;
-        if (!scene.pickPositionSupported) {
-            window.alert('This browser does not support pickPosition.');
-        }
+        var api = new API("cesiumContainer", defaultOption);
         //添加小车模型
-        var modelEntity = viewer.entities.add({
+        var modelEntity = api.viewer.entities.add({
             name: 'milktruck',
             position: Cesium.Cartesian3.fromDegrees(116.39128053279518, 39.905887020699225, 0),
             model: {
@@ -95,12 +78,12 @@
             }
         });
         //小车顶添加标签
-        var billboardEntity = viewer.entities.add({
+        var billboardEntity = api.viewer.entities.add({
             name: '标签',
             description: '这是一个标签',
             position: new Cesium.Cartesian3(-2177787.326978273, 4388798.544097367, 4069977.44356009),
             billboard: {
-                image: '../../assets/img/position.png',
+                image: '../../assets/img/local.png',
                 width: 32,
                 height: 32,
                 pixelOffset: new Cesium.Cartesian2(0, -16) //cesium里z轴向上为正，但这是设置的是屏幕坐标偏移，y向下为正
@@ -111,7 +94,7 @@
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向目标
                     // viewer.zoomTo(modelEntity);
-                    viewer.camera.flyTo({
+                    api.viewer.camera.flyTo({
                         destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
                             15.0),
                         orientation: {
@@ -125,7 +108,7 @@
                     ImmersionRoamingStart();
                     break;
                 case "endRoaming": //结束漫游
-                    ImmersionRoamingEnd();
+                    ImmersionRoamingStop();
                     break;
                 default:
                     break;
