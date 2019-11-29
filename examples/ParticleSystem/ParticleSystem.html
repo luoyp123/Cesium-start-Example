@@ -32,11 +32,13 @@
         <br>
         <span><strong>天气</strong></span>
         <div class="nowrap">
-            <button id="rain">雨</button> <button id="snow">雪</button> <!--<button id="fog">雾</button>-->
+            <button id="rain">雨</button> <button id="snow">雪</button>
+            <!--<button id="fog">雾</button>-->
         </div>
         <span><strong>特效</strong></span>
         <div class="nowrap">
             <button id="fire">火焰</button> <button id="smoke">烟雾</button>
+            <button id="Fountain">喷泉</button>
         </div>
         <br>
         <div class="nowrap">
@@ -111,7 +113,7 @@
             }
         });
 
-        var rainSystem, snowSystem, fireSystem, smokeSystem;
+        var rainSystem, snowSystem, fireSystem, smokeSystem, FountainSystem;
 
         $(".nowrap button").click(function () {
             if (rainSystem) rainSystem.show = false;
@@ -338,9 +340,53 @@
                             //粒子发生位置
                             modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
                             //粒子发射器位置矩阵
-                            emitterModelMatrix: computeEmitterModelMatrix(1, 1, 1), //设置偏移为0
+                            emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
                         });
                         api.scene.primitives.add(smokeSystem);
+                    }
+                    break;
+                case 'Fountain': //喷泉
+                    if (FountainSystem && !FountainSystem.isComplete && !FountainSystem.isDestroyed()) {
+                        FountainSystem.show = true;
+                    } else {
+                        FountainSystem = new Cesium.ParticleSystem({
+                            //贴图
+                            image: '../../assets/img/fountain.png',
+
+                            //粒子发射器 锥形发射器
+                            emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(6.0)),
+
+                            //颜色
+                            startColor: new Cesium.Color(1, 1, 1, 0.8),
+                            endColor: new Cesium.Color(0.80, 0.86, 1, 0.6),
+                            //尺寸
+                            startScale: 1.0,
+                            endScale: 20.0,
+                            imageSize: new Cesium.Cartesian2(5.0, 5.0),
+
+                            //粒子生命周期
+                            lifetime: 16.0,
+                            loop: true, //是否循环，
+                            // particleLife: 15.0,
+                            minimumParticleLife: 6,
+                            maximumParticleLife: 7,
+
+                            //速度
+                            // speed: 5.0,
+                            minimumSpeed: 9.0,
+                            maximumSpeed: 9.5,
+
+                            //粒子产生速率  
+                            emissionRate: 100.0,
+
+                            //粒子发生位置
+                            modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
+                            //粒子发射器位置矩阵
+                            emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
+
+                            updateCallback: applyGravity,
+                        });
+                        api.scene.primitives.add(FountainSystem);
                     }
                     break;
                 default:
@@ -348,7 +394,16 @@
             }
         });
 
+        function applyGravity(p, dt) {
+            var gravityScratch = new Cesium.Cartesian3();
+            // We need to compute a local up vector for each particle in geocentric space.
+            var position = p.position;
 
+            Cesium.Cartesian3.normalize(position, gravityScratch);
+            Cesium.Cartesian3.multiplyByScalar(gravityScratch, -3.5 * dt, gravityScratch);
+
+            p.velocity = Cesium.Cartesian3.add(p.velocity, gravityScratch, p.velocity);
+        }
 
         var DatGuiConfig = {
             rain: {
