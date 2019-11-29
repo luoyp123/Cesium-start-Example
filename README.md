@@ -13,7 +13,9 @@ Cesium 入门示例
 - 模型
   - [模型缩放](https://sogrey.github.io/Cesium-start-Example/examples/model/ModelScale.html)
 - 添加视频
-  - [视频融合](https://sogrey.github.io/Cesium-start-Example//examples/video/Video-Fusion.html)
+  - [视频融合](https://sogrey.github.io/Cesium-start-Example/examples/video/Video-Fusion.html)
+- 粒子效果
+  - [ParticleSystem](https://sogrey.github.io/Cesium-start-Example/examples/ParticleSystem/ParticleSystem.html)
 - 其他
   - [添加图标标签，自定义气泡](https://sogrey.github.io/Cesium-start-Example/examples/other/CustomBubble.html)
 
