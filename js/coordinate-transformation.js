@@ -28,7 +28,7 @@ function angle2Radian(angle) {
 
 //#region 坐标转换
 //二维屏幕坐标系到三维坐标系的转换
-function cartesian2ToCartesian3(cartesian2, result) {
+function cartesian2ToCartesian3(cartesian2) {
     return scene.globe.pick(viewer.camera.getPickRay(cartesian2), scene); //其中cartesian2为一个二维屏幕坐标。
 }
 //三维坐标系到二维屏幕坐标系的转换

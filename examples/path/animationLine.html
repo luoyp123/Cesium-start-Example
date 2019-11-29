@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - 流动纹理</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+
+        .dg.main {
+            width: 300px !important;
+        }
+
+        .dg.main>.close-button {
+            width: 300px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>ParticleSystem 流动纹理</h2>
+        <div class="nowrap">
+            <button id="view-beijing-flyto">上京城</button>
+        </div>
+        <br>
+
+        <div class="nowrap">
+            <label>已经设置默认视角在中国</label>
+        </div>
+        <br>
+    </div>
+    <div id="dat-gui" style="position: absolute;top: 10px;right: 10px;width: 300px;">
+    </div>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/DAT.GUI.min.js"></script>
+    <script src="../../js/API.js"></script>
+    <script src="../../js/other/AnimationDashLine.js"></script>
+
+    <script>
+        var defaultOption = {
+            // animation: false, //左下角控制动画            
+            // baseLayerPicker: false, //右上角图层选择器            
+            // fullscreenButton: false, //右下角全屏按钮          
+            // geocoder: false, //右上角搜索   
+            // sceneModePicker: false, //2d/3d切换     
+            // homeButton: false, //home键，点击回到默认视角
+            // infoBox: false, //点击模型不显示cesium自带的信息框
+            // // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
+            // selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
+            // timeline: false, //最下面时间轴            
+            // navigationHelpButton: false, //右上角帮助按钮 
+            // navigationInstructionsInitiallyVisibl: false,
+            // useDefaultRenderLoop: true,
+            // showRenderLoopErrors: true,
+            // projectionPicker: false, //投影选择器
+            // shouldAnimate: true,
+            // // terrainProvider: Cesium.createWorldTerrain(),//开启地形之后，地形有了海拔高度，之前没开地形是添加的车子陷入地下
+        };
+        var api = new API("cesiumContainer", defaultOption);
+        //添加小车模型
+        var modelEntity = api.viewer.entities.add({
+            name: 'milktruck',
+            position: Cesium.Cartesian3.fromDegrees(116.39128053279518, 39.905887020699225, 0),
+            model: {
+                uri: '../../SampleData/models/CesiumMilkTruck/CesiumMilkTruck-kmc.glb',
+                shadows: Cesium.ShadowMode.ENABLED,
+            }
+        });
+        //小车顶添加标签
+        var billboardEntity = api.viewer.entities.add({
+            name: '标签',
+            description: '这是一个标签',
+            position: new Cesium.Cartesian3(-2177787.326978273, 4388798.544097367, 4069977.44356009),
+            billboard: {
+                image: '../../assets/img/local.png',
+                width: 32,
+                height: 32,
+                pixelOffset: new Cesium.Cartesian2(0, -16) //cesium里z轴向上为正，但这是设置的是屏幕坐标偏移，y向下为正
+            }
+        });
+
+        //如果应针对地形表面对广告牌，折线，标签等图元进行深度测试，则为True，
+        //否则应始终在地形顶部绘制此类图元（除非它们位于地球的另一侧），则为false。
+        //对地形进行深度测试的缺点是，轻微的数字噪声或地形细节级别的切换有时会使在表面上消失的图元消失。
+        api.globe.depthTestAgainstTerrain = true;
+
+        api.viewer.camera.setView({
+            destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
+                15.0),
+            orientation: {
+                heading: Cesium.Math.toRadians(0.0),
+                pitch: Cesium.Math.toRadians(-45.0),
+                roll: 0.0
+            }
+        });
+
+        $(".nowrap button").click(function () {
+            switch ($(this).attr("id")) {
+                case "view-beijing-flyto": //飞向目标
+                    // viewer.zoomTo(modelEntity);
+                    api.viewer.camera.flyTo({
+                        destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
+                            15.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(0.0),
+                            pitch: Cesium.Math.toRadians(-45.0),
+                            roll: 0.0
+                        }
+                    });
+                    break;
+                default:
+                    break;
+            }
+        });
+
+
+
+        var points = [];
+
+        var handler = new Cesium.ScreenSpaceEventHandler(api.viewer.canvas);
+        handler.setInputAction(function (movement) {
+            var mousePosition = Cesium.Cartesian2.clone(movement.position);
+            var c2 = cartesian2ToCartesian3(mousePosition);
+            var temp = cartesian3ToWgs84(c2);
+            var position = new Cesium.Cartesian3(temp[0], temp[1], 0.5);
+            points.push(position);
+            console.log(position, points.length);
+            if (points.length >= 2) {
+                drawLine(api.viewer, points[points.length - 2], points[points.length - 1], Cesium.Color.GREEN,10000);
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+    </script>
+</body>
+
+</html>
