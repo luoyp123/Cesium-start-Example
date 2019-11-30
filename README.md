@@ -19,3 +19,5 @@ Cesium 入门示例
 - 其他
   - [添加图标标签，自定义气泡](https://sogrey.github.io/Cesium-start-Example/examples/other/CustomBubble.html)
 
+## License
+[MIT License](https://sogrey.github.io/about/mit.html)
