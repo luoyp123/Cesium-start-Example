@@ -5,8 +5,8 @@
  * @version v1
  */
 
-var lookFactor = .05; //调整视角速度
-var moveRate = .1; //移动速度
+var lookFactor = .2; //调整视角速度
+var moveRate = 2.0; //移动速度
 var footerHeight = 2.0; //相机距地2.0米高度
 //创建变量来记录当前的鼠标位置，以及用于跟踪相机如何移动的标志
 var startMousePosition; //开始时鼠标位置
@@ -14,7 +14,7 @@ var mousePosition; //当前鼠标位置
 var flags = {
     //是否调整视角
     looking: false,
-    //下位控制方向
+    //下为控制方向
     moveForward: false,
     moveBackward: false,
     moveUp: false,
@@ -140,14 +140,17 @@ function iRClockOnTickEventListener(clock) {
     // if (flags.moveBackward) {
     //     camera.moveBackward(moveRate);
     // }
+
+    var direction = new Cesium.Cartesian3();
+    getHorizontalDirection(camera, direction);
+
+    // var ray = new Cesium.Ray(currentCamera.position, direction);
+    // drawRayHelper(viewer,ray);
+
     if (flags.moveForward) {
-        var direction = new Cesium.Cartesian3();
-        getHorizontalDirection(camera, direction);
         camera.move(direction, moveRate);
     }
     if (flags.moveBackward) {
-        var direction = new Cesium.Cartesian3();
-        getHorizontalDirection(camera, direction);
         camera.move(direction, -moveRate);
     }
     if (flags.moveUp) {

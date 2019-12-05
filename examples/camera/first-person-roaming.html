@@ -48,26 +48,12 @@
     <script src="../../js/navigation.js"></script>
     <script src="../../js/API.js"></script>
     <script src="../../js/coordinate-transformation.js"></script>
-    <script src="../../js/GLE_Immersion_Roaming.js"></script>
+    <!-- <script src="../../js/GLE_Immersion_Roaming.js"></script> -->
+    <script src="../../js/GLE_plugin_Immersion_Roaming.js"></script>
     <script>
-        var defaultOption = {
-            // animation: false, //左下角控制动画            
-            // baseLayerPicker: false, //右上角图层选择器            
-            // fullscreenButton: false, //右下角全屏按钮          
-            // geocoder: false, //右上角搜索   
-            // sceneModePicker: false, //2d/3d切换     
-            // homeButton: false, //home键，点击回到默认视角
-            // infoBox: false, //点击模型不显示cesium自带的信息框
-            // // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
-            // selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
-            // timeline: false, //最下面时间轴            
-            // navigationHelpButton: false, //右上角帮助按钮 
-            // navigationInstructionsInitiallyVisibl: false,
-            // useDefaultRenderLoop: true,
-            // showRenderLoopErrors: true,
-            // projectionPicker: false, //投影选择器
-        };
-        var api = new API("cesiumContainer", defaultOption);
+        var api = new API("cesiumContainer", {
+            shouldAnimate: true,
+        });
         //添加小车模型
         var modelEntity = api.viewer.entities.add({
             name: 'milktruck',
@@ -90,6 +76,43 @@
             }
         });
 
+
+        // var tileset = new Cesium.Cesium3DTileset({
+        //     url: "/SampleData/models/house/tileset.json",
+        //     maximumScreenSpaceError: 50, //最大的屏幕空间误差
+        //     maximumNumberOfLoadedTiles: 1000, //最大数量的瓦片
+        //     skipLevelOfDetail: true, //确定在遍历过程中是否应应用细节级别跳过
+        //     baseScreenSpaceError: 1024, //在跳过细节级别之前必须达到的屏幕空间错误
+        //     skipScreenSpaceErrorFactor: 16,
+        //     skipLevels: 1, //加载瓦片时要跳过的最小级别数
+        //     immediatelyLoadDesiredLevelOfDetail: true, //忽略跳过因素，只需加载所需的瓦片。
+        //     loadSiblings: true, //确定在遍历期间是否总是下载可见块的兄弟项
+        //     cullWithChildrenBounds: true, //是否使用他们的孩子包围和的结合来剔除瓦片
+        //     dynamicScreenSpaceError: true, //减少远离相机的瓦片的屏幕空间误差
+        //     dynamicScreenSpaceErrorDensity: 0.00278, //密度用来调整动态屏幕空间误差，类似于雾密度。
+        //     dynamicScreenSpaceErrorFactor: 4.0, //动态屏幕空间因子
+        //     dynamicScreenSpaceErrorHeightFalloff: 0.25, //在密度开始下降时的倾斜高度的比率
+        //     debugShowStatistics: false, //调试显示统计
+        //     debugShowUrl: false,
+        //     debugShowGeometricError: false,
+        //     debugShowMemoryUsage: false,
+        //     //debugWireframe: true,//线框模式,
+        //     //debugColorizeTiles: true,//随机颜色
+        //     debugShowBoundingVolume: false, //最大包围盒
+        //     debugColorizeTiles: false, //随机颜色
+
+        // });
+        // api.viewer.scene.primitives.add(tileset);
+        // tileset.readyPromise.then(function (tileset) {
+        //     api.viewer.zoomTo(tileset, {
+        //         heading: Cesium.Math.toRadians(0),
+        //         pitch: Cesium.Math.toRadians(-30),
+        //         range: tileset.boundingSphere.radius * 4.0,
+        //     });
+        // });
+
+        var IR = new ImmersionRoaming(api.viewer);
+
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向目标
@@ -105,10 +128,12 @@
                     });
                     break;
                 case "startRoaming": //开始漫游
-                    ImmersionRoamingStart();
+                    // ImmersionRoamingStart();
+                    IR.start();
                     break;
                 case "endRoaming": //结束漫游
-                    ImmersionRoamingStop();
+                    // ImmersionRoamingStop();
+                    IR.stop();
                     break;
                 default:
                     break;

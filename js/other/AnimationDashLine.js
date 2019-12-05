@@ -1,3 +1,5 @@
+// https://www.wellyyss.cn/ysCesium//plugins/ysc/ysc.js
+
 /*
  * 流动纹理线
  * color 颜色
@@ -87,18 +89,17 @@ Cesium.Material._materialCache.addMaterial(Cesium.Material.PolylineTrailLinkType
 function drawLine(viewer, src, dst, color, duration) {
     var curLinePointsArr = generateCurve(src, dst);
     if (!Cesium.defined(duration)) {
-        duration = 4000;
+        duration = 20;
     }
     viewer.entities.add({
         description: 'trail-line',
         name: 'test',
         polyline: {
-            width: 2,
+            width: 10,
             positions: curLinePointsArr,
             material: new Cesium.PolylineTrailLinkMaterialProperty(color, duration)
         }
     });
-
 }
 
 function generateCurve(src, dst) {

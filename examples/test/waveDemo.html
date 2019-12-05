@@ -1,0 +1,67 @@
+<!-- https://blog.csdn.net/cysear/article/details/85041062 -->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>管道波浪test</title>
+</head>
+<body>
+<section>
+
+    <canvas id="canvas" width="1920" height="1021" style="border:1px solid #F56C6C;">Your browser does not support the canvas element.</canvas>
+
+    <script src="ocanvas-2.10.0.min.js"></script>
+    <script src="wave.js"></script>
+    <script> 
+        var canvas = oCanvas.create({
+            canvas: "#canvas",
+//            background: 'transparent',
+            fps: 120
+        });
+
+
+
+        var colorArr = ['#9f00ff','#fff100','#00ff0e','#1142ff','#ff08d9','#000000','#df3988']
+        var speed_all = 0.3;//水流速度
+        var pipe_width  =5;// 水管的宽度（宽度为其3 倍）
+        var index_ch  = 10; //反比于波的密度，越小波越密
+        var max_py  = Math.PI * 5;//最大偏移量默认5Π
+        var line_height  = 8;//波的厚度
+        var color_fill  = "rgba(0, 161, 255, 0.79)";//填充颜色
+        var color_stroke   = "rgba(0,0,0,.8)" ;//画笔颜色
+
+        var wv = canvas.display.myWv({
+            cells: [//管道路径数组
+                {x_cell: 100, y_cell: 100},//管道起点位置
+                {x_cell: 700, y_cell: 300}//管道终点位置
+            ],
+            Speed: speed_all,//水流速度
+            blHeight:pipe_width,//波高
+            indexCH : index_ch, // 越小波越密
+            LineHeight: line_height,//波厚度
+            indexPY:0,//起点偏移量
+            maxPY:max_py,//最大偏移量
+            flowDirection:0,//反向0000
+            paused: 0,//是否暂停——1暂停0开始
+            fill:colorArr[2],//水流颜色
+            stroke:color_stroke,//画笔颜色
+
+        }); 
+        canvas.addChild(wv);
+       
+        canvas.setLoop(function () {
+            
+            canvas.redraw();　　//重绘画布
+            wv.advance();
+           
+
+        }).start();
+
+    </script>
+</section>
+</body>
+</html>

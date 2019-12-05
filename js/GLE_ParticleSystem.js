@@ -1,4 +1,54 @@
 var particleSystems = [];
+var defaultConfig = {//默认配置
+    rain: { //天气-雨
+
+    },
+    snow: { //天气-雪
+
+    },
+    fire: { //火焰
+
+    },
+    smoke: { //雪
+
+    }
+}
+
+/**
+ * 更新粒子效果配置
+ * @param {*} tag 
+ * @param {*} config 配置
+ */
+function updateParticleSystem(tag, config) {}
+/**
+ * 更新粒子效果配置
+ * @param {*} particleSystem 粒子对象
+ * @param {*} config 配置
+ */
+function updateConfig(particleSystem, config) {
+
+}
+
+/**
+ * 清除所有粒子效果
+ */
+function cleanAllParticleSystem() {
+    for (let index = 0; index < particleSystems.length; index++) {
+        var element = particleSystems[index];
+        if (element && element instanceof Cesium.ParticleSystem && !element.isDestroyed()) {
+            element.destroyed();
+        }
+    }
+}
+/**
+ * 产出粒子
+ * @param {*} tag 
+ * @param {*} position 位置
+ * @param {*} config 合并后的配置
+ */
+function makeParticleSystem(tag, position, config) {
+
+}
 
 function addParticleSystem(tag, psType, position, config) {
     switch (psType) {
@@ -13,15 +63,6 @@ function addParticleSystem(tag, psType, position, config) {
     }
 }
 
-
-function cleanAllParticleSystem() {
-    for (let index = 0; index < particleSystems.length; index++) {
-        var element = particleSystems[index];
-        if (element && element instanceof Cesium.ParticleSystem && !element.isDestroyed()) {
-            element.destroyed();
-        }
-    }
-}
 
 
 
