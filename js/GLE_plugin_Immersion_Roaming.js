@@ -8,9 +8,13 @@
  */
 ImmersionRoaming = (function (Cesium) {
     var _viewer;
-    var lookFactor = .2; //调整视角速度
-    var moveRate = 2.0; //移动速度
-    var footerHeight = 2.0; //相机距地2.0米高度
+    var defaultConfig = {
+        lookFactor: .2, //调整视角速度
+        moveRate: 0.5, //移动速度
+        footerHeight: 2.0, //相机距地2.0米高度
+    };
+    var config = defaultConfig;
+
     //创建变量来记录当前的鼠标位置，以及用于跟踪相机如何移动的标志
     var startMousePosition; //开始时鼠标位置
     var mousePosition; //当前鼠标位置
@@ -75,12 +79,10 @@ ImmersionRoaming = (function (Cesium) {
      * @param {Object} options 配置信息
      */
     _.prototype.setConfig = function (options) {
-        if (options.hasOwnProperty("lookFactor"))
-            lookFactor = options["lookFactor"];
-        if (options.hasOwnProperty("moveRate"))
-            moveRate = options["moveRate"];
-        if (options.hasOwnProperty("footerHeight"))
-            footerHeight = options["footerHeight"];
+        for (var o in options) {
+            if (options.hasOwnProperty(o))
+                config[o] = options[o];
+        }
     }
     /**
      * 漫游初始化
@@ -92,12 +94,12 @@ ImmersionRoaming = (function (Cesium) {
         //heading 弧度
         var heading = _viewer.camera.heading;
         //弧度转角度
-        heading = radian2Angle(heading);
+        heading = Cesium.Math.toDegrees(heading);
         //世界坐标转经纬度
         var degrees = cartesian3ToWgs84(position);
         //调整视角水平、高程为2米
         _viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(degrees[0], degrees[1], footerHeight),
+            destination: Cesium.Cartesian3.fromDegrees(degrees[0], degrees[1], config.footerHeight),
             orientation: {
                 heading: Cesium.Math.toRadians(heading),
                 pitch: Cesium.Math.toRadians(0.0),
@@ -146,11 +148,9 @@ ImmersionRoaming = (function (Cesium) {
             var x = (mousePosition.x - startMousePosition.x) / width;
             var y = -(mousePosition.y - startMousePosition.y) / height;
             //如果相机没有在2D模式下，则以弧度沿其上向量的相反方向围绕其右向量旋转
-            // camera.lookRight(x * lookFactor); //参数是弧度，这是转换成弧度
-            var heading = radian2Angle(currentCamera.heading) + radian2Angle(x * lookFactor);
+            var heading = Cesium.Math.toDegrees(currentCamera.heading) + Cesium.Math.toDegrees(x * config.lookFactor);
             //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
-            // camera.lookUp(y * lookFactor);
-            var pitch = radian2Angle(currentCamera.pitch) + radian2Angle(y * lookFactor);
+            var pitch = Cesium.Math.toDegrees(currentCamera.pitch) + Cesium.Math.toDegrees(y * config.lookFactor);
             camera.setView({
                 destination: currentCamera.position,
                 orientation: {
@@ -176,22 +176,22 @@ ImmersionRoaming = (function (Cesium) {
         // drawRayHelper(viewer,ray);
 
         if (flags.moveForward) {
-            camera.move(direction, moveRate);
+            camera.move(direction, config.moveRate);
         }
         if (flags.moveBackward) {
-            camera.move(direction, -moveRate);
+            camera.move(direction, -config.moveRate);
         }
         if (flags.moveUp) {
-            camera.moveUp(moveRate);
+            camera.moveUp(config.moveRate);
         }
         if (flags.moveDown) {
-            camera.moveDown(moveRate);
+            camera.moveDown(config.moveRate);
         }
         if (flags.moveLeft) {
-            camera.moveLeft(moveRate);
+            camera.moveLeft(config.moveRate);
         }
         if (flags.moveRight) {
-            camera.moveRight(moveRate);
+            camera.moveRight(config.moveRate);
         }
     }
 
