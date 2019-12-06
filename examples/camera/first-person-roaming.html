@@ -76,7 +76,6 @@
             }
         });
 
-
         // var tileset = new Cesium.Cesium3DTileset({
         //     url: "/SampleData/models/house/tileset.json",
         //     maximumScreenSpaceError: 50, //最大的屏幕空间误差
@@ -111,7 +110,7 @@
         //     });
         // });
 
-        var IR = new ImmersionRoaming(api.viewer);
+        var IR = new GLEImmersionRoaming(api.viewer);
 
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {

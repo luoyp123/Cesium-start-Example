@@ -6,8 +6,9 @@
  * @version v1
  * @param {*} Cesium
  */
-ImmersionRoaming = (function (Cesium) {
-    var _viewer;
+GLEImmersionRoaming = (function (Cesium) {
+    var _viewer, _scene, _canvas, _camera;
+
     var defaultConfig = {
         lookFactor: .2, //调整视角速度
         moveRate: 0.5, //移动速度
@@ -34,15 +35,18 @@ ImmersionRoaming = (function (Cesium) {
     function _(viewer) {
         _viewer = viewer;
         this._viewer = viewer;
+        _scene = _viewer.scene;
+        _canvas = _viewer.canvas;
+        _camera = _viewer.camera;
     }
 
     //获取视角
     function getCamera() {
         return {
-            position: _viewer.camera.position, //位置
-            direction: _viewer.camera.direction, //方向
-            heading: _viewer.camera.heading, //航向角
-            pitch: _viewer.camera.pitch //俯仰角
+            position: _camera.position, //位置
+            direction: _camera.direction, //方向
+            heading: _camera.heading, //航向角
+            pitch: _camera.pitch //俯仰角
         }
     }
 
@@ -90,15 +94,15 @@ ImmersionRoaming = (function (Cesium) {
     function initIR() {
         //获取当前相机位置，经纬度 - 设置漫游初始相机位置
         //获取相机世界坐标
-        var position = _viewer.camera.position;
+        var position = _camera.position;
         //heading 弧度
-        var heading = _viewer.camera.heading;
+        var heading = _camera.heading;
         //弧度转角度
         heading = Cesium.Math.toDegrees(heading);
         //世界坐标转经纬度
         var degrees = cartesian3ToWgs84(position);
         //调整视角水平、高程为2米
-        _viewer.camera.flyTo({
+        _camera.flyTo({
             destination: Cesium.Cartesian3.fromDegrees(degrees[0], degrees[1], config.footerHeight),
             orientation: {
                 heading: Cesium.Math.toRadians(heading),
@@ -113,14 +117,47 @@ ImmersionRoaming = (function (Cesium) {
      * @param {boolean} enable true:开启空间相机控制器默认动作,false：禁用空间相机控制器默认动作
      */
     function setIRConfig(enable) {
-        var scene = _viewer.scene;
-        var ellipsoid = _viewer.scene.globe.ellipsoid; //获取椭球体
-        var screenSpaceCameraController = scene.screenSpaceCameraController; //获取用于摄像机输入处理的控制器。
+        var ellipsoid = _scene.globe.ellipsoid; //获取椭球体
+        var screenSpaceCameraController = _scene.screenSpaceCameraController; //获取用于摄像机输入处理的控制器。
         screenSpaceCameraController.enableRotate = enable; //如果为true，则允许用户旋转世界以平移用户的位置。该标志仅适用于2D和3D。
         screenSpaceCameraController.enableTranslate = enable; //如果为true，则允许用户在地图上平移。如果为false，则相机保持锁定在当前位置。
         screenSpaceCameraController.enableZoom = enable; //如果为true，则允许用户放大和缩小。如果为false，则将相机锁定到距椭球的当前距离。
         screenSpaceCameraController.enableTilt = enable; //如果为true，则允许用户倾斜相机。如果为false，则将相机锁定到当前heading。
         screenSpaceCameraController.enableLook = enable; //如果为true，则允许用户使用自由外观。如果为false，则只能通过平移或旋转来更改摄像机的观看方向。
+    }
+
+    /**
+     * 获取相机水平面上投影朝向
+     * @param {Cesium.Camera} camera 相机
+     * @param {Cesium.Cartesian3} result [可选]相机水平面上投影朝向,（已转为单位向量）
+     */
+    function getHorizontalDirection(camera, result) {
+        if (!Cesium.defined(camera)) {
+            console.error("camera must not be null.");
+            return null;
+        }
+
+        if (!Cesium.defined(result)) {
+            result = new Cesium.Cartesian3();
+        }
+
+        var direction = camera.direction.clone();
+        var position = camera.position.clone();
+        var pitch = camera.pitch;
+        var right = camera.right.clone();
+
+        var lookScratchQuaternion = new Cesium.Quaternion();
+        var lookScratchMatrix = new Cesium.Matrix3();
+
+        var turnAngle = Cesium.defined(pitch) ? pitch : camera.defaultLookAmount;
+        var quaternion = Cesium.Quaternion.fromAxisAngle(right, -turnAngle, lookScratchQuaternion);
+        var rotation = Cesium.Matrix3.fromQuaternion(quaternion, lookScratchMatrix);
+
+        Cesium.Matrix3.multiplyByVector(rotation, direction, result);
+
+        Cesium.Cartesian3.normalize(result, result);
+        // console.log(direction, result);
+        return result;
     }
 
     function iRKeyDownEvent(e) {
@@ -138,12 +175,10 @@ ImmersionRoaming = (function (Cesium) {
     }
 
     function iRClockOnTickEventListener(clock) {
-        var canvas = _viewer.canvas;
-        var camera = _viewer.camera;
         var currentCamera = getCamera();
         if (flags.looking) {
-            var width = canvas.clientWidth;
-            var height = canvas.clientHeight;
+            var width = _canvas.clientWidth;
+            var height = _canvas.clientHeight;
 
             var x = (mousePosition.x - startMousePosition.x) / width;
             var y = -(mousePosition.y - startMousePosition.y) / height;
@@ -151,7 +186,7 @@ ImmersionRoaming = (function (Cesium) {
             var heading = Cesium.Math.toDegrees(currentCamera.heading) + Cesium.Math.toDegrees(x * config.lookFactor);
             //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
             var pitch = Cesium.Math.toDegrees(currentCamera.pitch) + Cesium.Math.toDegrees(y * config.lookFactor);
-            camera.setView({
+            _camera.setView({
                 destination: currentCamera.position,
                 orientation: {
                     heading: Cesium.Math.toRadians(heading), //航向角
@@ -163,47 +198,45 @@ ImmersionRoaming = (function (Cesium) {
 
         // currentCamera.position;
         // if (flags.moveForward) {
-        //     camera.moveForward(moveRate);            
+        //     _camera.moveForward(moveRate);            
         // }
         // if (flags.moveBackward) {
-        //     camera.moveBackward(moveRate);
+        //     _camera.moveBackward(moveRate);
         // }
 
         var direction = new Cesium.Cartesian3();
-        getHorizontalDirection(camera, direction);
+        getHorizontalDirection(_camera, direction);
 
         // var ray = new Cesium.Ray(currentCamera.position, direction);
         // drawRayHelper(viewer,ray);
 
         if (flags.moveForward) {
-            camera.move(direction, config.moveRate);
+            _camera.move(direction, config.moveRate);
         }
         if (flags.moveBackward) {
-            camera.move(direction, -config.moveRate);
+            _camera.move(direction, -config.moveRate);
         }
         if (flags.moveUp) {
-            camera.moveUp(config.moveRate);
+            _camera.moveUp(config.moveRate);
         }
         if (flags.moveDown) {
-            camera.moveDown(config.moveRate);
+            _camera.moveDown(config.moveRate);
         }
         if (flags.moveLeft) {
-            camera.moveLeft(config.moveRate);
+            _camera.moveLeft(config.moveRate);
         }
         if (flags.moveRight) {
-            camera.moveRight(config.moveRate);
+            _camera.moveRight(config.moveRate);
         }
     }
 
     function iREvents(clock) {
-        var canvas = _viewer.canvas;
-        var camera = _viewer.camera;
-        canvas.setAttribute('tabindex', '0');
-        canvas.onclick = function () {
-            canvas.focus();
+        _canvas.setAttribute('tabindex', '0');
+        _canvas.onclick = function () {
+            _canvas.focus();
         }
         //处理用户输入事件。可以添加自定义函数，以便在用户输入时执行
-        handler = new Cesium.ScreenSpaceEventHandler(canvas);
+        handler = new Cesium.ScreenSpaceEventHandler(_canvas);
         handler.setInputAction(function (movement) {
             flags.looking = true;
             mousePosition = startMousePosition = Cesium.Cartesian3.clone(movement.position);
@@ -252,7 +285,7 @@ ImmersionRoaming = (function (Cesium) {
         document.removeEventListener('keydown', iRKeyDownEvent, false);
         document.removeEventListener('keyup', iRKeyUpEvent, false);
 
-        viewer.clock.onTick.removeEventListener(iRClockOnTickEventListener);
+        _viewer.clock.onTick.removeEventListener(iRClockOnTickEventListener);
         onImmersionRoamingEnd();
         console.log("结束漫游");
     }

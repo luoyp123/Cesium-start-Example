@@ -132,7 +132,7 @@
             var mousePosition = Cesium.Cartesian2.clone(movement.position);
             var c2 = cartesian2ToCartesian3(mousePosition);
             var temp = cartesian3ToWgs84(c2);
-            var position = new Cesium.Cartesian3(temp[0], temp[1], 0.5);
+            var position = new Cesium.Cartesian3(temp[0], temp[1], temp[2]);
             points.push(position);
             console.log(position, points.length);
             if (points.length >= 2) {

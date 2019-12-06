@@ -55,7 +55,7 @@
     <script src="../../js/DAT.GUI.min.js"></script>
     
     <script src="../../js/API.js"></script>
-    <script src="../../js/GLE_ParticleSystem.js"></script>
+    <script src="../../js/GLE_plugin_ParticleSystem.js"></script>
   
     <script>
         var defaultOption = {
@@ -115,7 +115,11 @@
             }
         });
 
+        var ps = new GLEParticleSystem(api.viewer);
+
         var rainSystem, snowSystem, fireSystem, smokeSystem, FountainSystem;
+
+
 
         $(".nowrap button").click(function () {
             if (rainSystem) rainSystem.show = false;
@@ -257,49 +261,58 @@
                     if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
                         fireSystem.show = true;
                     } else {
-                        fireSystem = new Cesium.ParticleSystem({
-                            //贴图
+                        // fireSystem = new Cesium.ParticleSystem({
+                        //     //贴图
+                        //     image: '../../assets/img/fire.png',
+
+                        //     //粒子发射器 锥形发射器
+                        //     emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(20.0)),
+
+                        //     //颜色
+                        //     // color:Cesium.Color.RED,
+                        //     startColor: Cesium.Color.YELLOW.withAlpha(0.85),
+                        //     endColor: Cesium.Color.DARKORANGE.withAlpha(0.0),
+
+                        //     //尺寸
+                        //     startScale: 1.0,
+                        //     endScale: 4.0,
+                        //     // imageSize: new Cesium.Cartesian2(40, 40),//图片尺寸
+                        //     minimumImageSize: new Cesium.Cartesian2(20.0, 20.0),
+                        //     maximumImageSize: new Cesium.Cartesian2(40.0, 40.0),
+
+                        //     //粒子生命周期
+                        //     lifetime: 16.0,
+                        //     loop: true,
+                        //     // particleLife: 15.0,
+                        //     // minimumParticleLife: 10.0,
+                        //     // maximumParticleLife: 20.0,
+
+                        //     //速度
+                        //     // speed: 5.0,
+                        //     minimumSpeed: 1.0,
+                        //     maximumSpeed: 3.0,
+
+                        //     //粒子产生速率  
+                        //     emissionRate: 15.0,
+
+                        //     //粒子发生位置
+                        //     modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
+                        //     // modelEntity.computeModelMatrix(viewer.clock.startTime,
+                        //     //     new Cesium.Matrix4()
+                        //     // ),
+                        //     //粒子发射器位置矩阵
+                        //     emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
+                        // });
+                        // console.log(fireSystem);
+                        // var s = api.scene.primitives.add(fireSystem);
+                        // console.log(s);
+
+                        fireSystem = ps.addParticleSystem("123456","fire",{
                             image: '../../assets/img/fire.png',
-
-                            //粒子发射器 锥形发射器
-                            emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(20.0)),
-
-                            //颜色
-                            // color:Cesium.Color.RED,
-                            startColor: Cesium.Color.YELLOW.withAlpha(0.5),
-                            endColor: Cesium.Color.DARKORANGE.withAlpha(0.7),
-
-                            //尺寸
-                            startScale: 1.0,
-                            endScale: 4.0,
-                            // imageSize: new Cesium.Cartesian2(40, 40),//图片尺寸
-                            minimumImageSize: new Cesium.Cartesian2(20.0, 20.0),
-                            maximumImageSize: new Cesium.Cartesian2(40.0, 40.0),
-
-                            //粒子生命周期
-                            lifetime: 16.0,
-                            loop: true,
-                            // particleLife: 15.0,
-                            // minimumParticleLife: 10.0,
-                            // maximumParticleLife: 20.0,
-
-                            //速度
-                            // speed: 5.0,
-                            minimumSpeed: 1.0,
-                            maximumSpeed: 3.0,
-
-                            //粒子产生速率  
-                            emissionRate: 15.0,
-
-                            //粒子发生位置
-                            modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
-                            // modelEntity.computeModelMatrix(viewer.clock.startTime,
-                            //     new Cesium.Matrix4()
-                            // ),
-                            //粒子发射器位置矩阵
-                            emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
-                        });
-                        api.scene.primitives.add(fireSystem);
+                            emitterRadian: 10.0,
+                            position:modelEntity,
+                            
+                        })
                     }
                     break;
                 case "smoke":
@@ -351,6 +364,9 @@
                     if (FountainSystem && !FountainSystem.isComplete && !FountainSystem.isDestroyed()) {
                         FountainSystem.show = true;
                     } else {
+                        var position = new Cesium.Cartesian3();
+                        modelEntity.position.getValueInReferenceFrame (Cesium.JulianDate.now(),Cesium.ReferenceFrame.FIXED,position);                    
+                        Cesium.Cartesian3.add(position,new Cesium.Cartesian3(10,10,10),position);
                         FountainSystem = new Cesium.ParticleSystem({
                             //贴图
                             image: '../../assets/img/fountain.png',
@@ -382,7 +398,8 @@
                             emissionRate: 100.0,
 
                             //粒子发生位置
-                            modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
+                            // modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
+                            modelMatrix: computeModelMatrix(new Cesium.ConstantPositionProperty(position,Cesium.ReferenceFrame.FIXED), Cesium.JulianDate.now()),
                             //粒子发射器位置矩阵
                             emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
 

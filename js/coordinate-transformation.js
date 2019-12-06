@@ -184,6 +184,13 @@ function drawRayHelper(viewer, ray) {
  * @param {Number} time 时间
  */
 function computeModelMatrix(entity, time) {
+    if (!Cesium.defined(entity)) {
+        return undefined;
+    }
+    if (entity instanceof Cesium.ConstantPositionProperty) {
+        return computePositionMatrix(entity, time);
+    }
+
     //获取位置
     var position = Cesium.Property.getValueOrUndefined(entity.position, time, new Cesium.Cartesian3());
     if (!Cesium.defined(position)) {
@@ -195,8 +202,24 @@ function computeModelMatrix(entity, time) {
     if (!Cesium.defined(orientation)) {
         modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(position, undefined, new Cesium.Matrix4());
     } else {
-        modelMatrix = Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromQuaternion(orientation, new Cesium.Matrix3()), position, new Cesium.Matrix4());
+        modelMatrix = Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromQuaternion(orientation, new Cesium.Matrix3()),
+            position, new Cesium.Matrix4());
     }
+    return modelMatrix;
+}
+
+function computePositionMatrix(position, time) {
+    if (!Cesium.defined(position)) {
+        return undefined;
+    }
+    //获取位置
+    var positionTmp = Cesium.Property.getValueOrUndefined(position, time, new Cesium.Cartesian3());
+    if (!Cesium.defined(positionTmp)) {
+        return undefined;
+    }
+    //获取方向
+    var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(positionTmp, undefined, new Cesium.Matrix4());
+
     return modelMatrix;
 }
 /**
@@ -318,7 +341,7 @@ function parabolaEquation(options, resultOut) {
     //方程 y=-(4h/L^2)*x^2+h h:顶点高度 L：横纵间距较大者
     var h = options.height && options.height > 5000 ? options.height : 5000;
     var L = Math.abs(options.pt1.lon - options.pt2.lon) > Math.abs(options.pt1.lat - options.pt2.lat) ?
-     Math.abs(options.pt1.lon - options.pt2.lon) : Math.abs(options.pt1.lat - options.pt2.lat);
+        Math.abs(options.pt1.lon - options.pt2.lon) : Math.abs(options.pt1.lat - options.pt2.lat);
     var num = options.num && options.num > 50 ? options.num : 50;
     var result = [];
     var dlt = L / num;
