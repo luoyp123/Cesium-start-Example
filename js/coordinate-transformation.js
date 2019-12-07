@@ -177,7 +177,6 @@ function drawRayHelper(viewer, ray) {
         viewer.flyTo(purpleArrow);
     }
 }
-
 /**
  * 计算当前时间点飞机模型的位置矩阵
  * @param {Cesium.Entity} entity 3D实体
@@ -186,9 +185,6 @@ function drawRayHelper(viewer, ray) {
 function computeModelMatrix(entity, time) {
     if (!Cesium.defined(entity)) {
         return undefined;
-    }
-    if (entity instanceof Cesium.ConstantPositionProperty) {
-        return computePositionMatrix(entity, time);
     }
 
     //获取位置
@@ -207,13 +203,36 @@ function computeModelMatrix(entity, time) {
     }
     return modelMatrix;
 }
-
+/**
+ * 根据位置坐标（WGS84）计算当前时间点飞机模型的位置矩阵
+ * @param {Cesium.Cartesian3} wgs84 Wgs84经纬度坐标（角度制）
+ * @param {Number} time 时间：Cesium.JulianDate.now()
+ */
+function computeWgs84Matrix(wgs84, time) {
+    //WGS84 转 Cartesian3
+    var positionCartesian3 = Cesium.Cartesian3.fromDegrees(wgs84.x /*longitude*/ , wgs84.y /*longitude*/ , wgs84.z /*height*/ );
+    computePositionMatrix(positionCartesian3, time)
+}
+/**
+ * 根据世界坐标（Cartesian3）计算当前时间点飞机模型的位置矩阵
+ * @param {Cesium.Cartesian3} position 笛卡尔世界坐标
+ * @param {Number} time 时间：Cesium.JulianDate.now()
+ */
 function computePositionMatrix(position, time) {
     if (!Cesium.defined(position)) {
         return undefined;
     }
+    var positionProperty = new Cesium.ConstantPositionProperty(position, Cesium.ReferenceFrame.FIXED);
+    return computePositionPropertyMatrix(positionProperty, time);
+}
+/**
+ * 根据ConstantPositionProperty计算当前时间点飞机模型的位置矩阵
+ * @param {Cesium.ConstantPositionProperty} positionProperty 
+ * @param {Number} time 时间：Cesium.JulianDate.now()
+ */
+function computePositionPropertyMatrix(positionProperty, time) {
     //获取位置
-    var positionTmp = Cesium.Property.getValueOrUndefined(position, time, new Cesium.Cartesian3());
+    var positionTmp = Cesium.Property.getValueOrUndefined(positionProperty, time, new Cesium.Cartesian3());
     if (!Cesium.defined(positionTmp)) {
         return undefined;
     }
@@ -223,7 +242,7 @@ function computePositionMatrix(position, time) {
     return modelMatrix;
 }
 /**
- * 计算引擎(粒子发射器)位置矩阵
+ * 计算引擎(粒子发射器)位置偏移矩阵
  * @param {Number} xOffset
  * @param {Number} yOffset
  * @param {Number} zOffset
