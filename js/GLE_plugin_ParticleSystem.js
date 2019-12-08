@@ -284,6 +284,7 @@ GLEParticleSystem = (function (Cesium) {
     /**
      * 计算坐标矩阵
      * @param {*} position Array(16) or Array(3) or Entity
+     * @returns Cesium.Matrix4 4x4矩阵
      */
     function transformPosition(position) {
         var time = Cesium.JulianDate.now();
@@ -446,26 +447,26 @@ GLEParticleSystem = (function (Cesium) {
                     }
                 };
 
-                var snowUpdate = function (particle, dt) {
-                    var snowGravityScratch = new Cesium.Cartesian3();
-                    snowGravityScratch = Cesium.Cartesian3.normalize(particle.position, snowGravityScratch);
-                    Cesium.Cartesian3.multiplyByScalar(
-                        snowGravityScratch,
-                        // Cesium.Math.randomBetween(-30.0, -300.0),
-                        -_config.gravity * _config.gravity * dt,
-                        snowGravityScratch
-                    );
-                    particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch,
-                        particle.velocity);
+                // var snowUpdate = function (particle, dt) {
+                //     var snowGravityScratch = new Cesium.Cartesian3();
+                //     snowGravityScratch = Cesium.Cartesian3.normalize(particle.position, snowGravityScratch);
+                //     Cesium.Cartesian3.multiplyByScalar(
+                //         snowGravityScratch,
+                //         // Cesium.Math.randomBetween(-30.0, -300.0),
+                //         -_config.gravity * _config.gravity * dt,
+                //         snowGravityScratch
+                //     );
+                //     particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch,
+                //         particle.velocity);
 
-                    var distance = Cesium.Cartesian3.distance(_camera.position, particle.position);
-                    if (distance > _config.emitterRadian) {
-                        particle.endColor.alpha = 0.0;
-                    } else {
-                        particle.endColor.alpha = endColor.alpha / (distance /
-                            _config.emitterRadian + 0.1);
-                    }
-                };
+                //     var distance = Cesium.Cartesian3.distance(_camera.position, particle.position);
+                //     if (distance > _config.emitterRadian) {
+                //         particle.endColor.alpha = 0.0;
+                //     } else {
+                //         particle.endColor.alpha = endColor.alpha / (distance /
+                //             _config.emitterRadian + 0.1);
+                //     }
+                // };
 
 
                 particleSystem = new Cesium.ParticleSystem({
@@ -553,8 +554,8 @@ GLEParticleSystem = (function (Cesium) {
                     //尺寸
                     startScale: _config.startScale,
                     endScale: _config.endScale,
-                    minimumImageSize: new Cesium.Cartesian2(_config.minimumImageSize[0], _config.minimumImageSize[1]),
-                    maximumImageSize: new Cesium.Cartesian2(_config.maximumImageSize[0], _config.maximumImageSize[1]),
+                    minimumImageSize: new Cesium.Cartesian2(_config.minimumImageSize[0], _config.minimumImageSize[0]),
+                    maximumImageSize: new Cesium.Cartesian2(_config.maximumImageSize[1], _config.maximumImageSize[1]),
 
                     //粒子生命周期
                     lifetime: _config.lifetime,
@@ -593,7 +594,12 @@ GLEParticleSystem = (function (Cesium) {
             return _viewer.scene.primitives.add(particleSystem);
         } else return null;
     }
-
+    /**
+     * 产出粒子(对外暴露API)
+     * @param {*} tag 
+     * @param {String} psType 粒子类型
+     * @param {Object} config 配置
+     */
     _.prototype.addParticleSystem = function (tag, psType, config) {
         var _config = {};
         switch (psType) {

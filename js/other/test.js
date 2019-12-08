@@ -333,3 +333,76 @@ function generateCurve(points) {
     }
     return curvePointsArr;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * https://blog.csdn.net/weixin_44265800/article/details/103106321
+ * @param {Array<Float>} lats 经度数组
+ * @param {Array<Float>} lngs 纬度数组
+ * @param {Array<Float>} values 已知的值数组
+ * @param {Array<Float>} coords 一个cesium的数据格式，[114,25,114,23,114,22],不用闭合，就一个面上所有点。
+ * @param {Object<geojson>} ex 普通的geojson格式的面的格式的coordinates。
+ */
+function drawKriging(lats, lngs, values, coords, ex) {
+    if (values.length > 3) {
+        let colors = [
+            "#006837", "#1a9850", "#66bd63", "#a6d96a", "#d9ef8b", "#ffffbf",
+            "#fee08b", "#fdae61", "#f46d43", "#d73027", "#a50026"
+        ];
+        const polygon = new Cesium.PolygonGeometry({
+            polygonHierarchy: new Cesium.PolygonHierarchy(
+                Cesium.Cartesian3.fromDegreesArray(coords)
+            )
+        }); //构造面，方便计算范围
+        let extent = Cesium.PolygonGeometry.computeRectangle({
+            polygonHierarchy: new Cesium.PolygonHierarchy(
+                Cesium.Cartesian3.fromDegreesArray(coords)
+            )
+        }); //范围（弧度）
+        let minx = Cesium.Math.toDegrees(extent.west); //转换为经纬度
+        let miny = Cesium.Math.toDegrees(extent.south);
+        let maxx = Cesium.Math.toDegrees(extent.east);
+        let maxy = Cesium.Math.toDegrees(extent.north);
+        let canvas = null; //画布
+        function getCanvas() {
+            //1.用克里金训练一个variogram对象
+            let variogram = kriging.train(values, lngs, lats, 'exponential', 0, 100);
+            //2.使用刚才的variogram对象使polygons描述的地理位置内的格网元素具备不一样的预测值；
+            let grid = kriging.grid(ex, variogram, (maxy - miny) / 500);
+            canvas = document.createElement('canvas');
+            canvas.width = 800;
+            canvas.height = 800;
+            canvas.style.display = 'block';
+            canvas.getContext('2d').globalAlpha = 0.75; //设置透明度
+            //3.将得到的格网预测值渲染到canvas画布上
+            kriging.plot(canvas, grid, [minx, maxx], [miny, maxy], colors);
+        }
+
+        getCanvas();
+        if (canvas != null) {
+            viewer.entities.add({
+                polygon: {
+                    hierarchy: {
+                        positions: Cesium.Cartesian3.fromDegreesArray(coords)
+                    },
+                    material: new Cesium.ImageMaterialProperty({
+                        image: canvas //使用贴图的方式将结果贴到面上
+                    })
+                }
+            });
+        }
+    }
+}

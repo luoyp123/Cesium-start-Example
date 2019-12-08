@@ -41,7 +41,7 @@ GLEImmersionRoaming = (function (Cesium) {
     }
 
     //获取视角
-    function getCamera() {
+    function getCamera () {
         return {
             position: _camera.position, //位置
             direction: _camera.direction, //方向
