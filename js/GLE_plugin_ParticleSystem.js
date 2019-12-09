@@ -272,7 +272,10 @@ GLEParticleSystem = (function (Cesium) {
             var ps = particleSystems[tag];
             if (ps && ps instanceof Cesium.ParticleSystem && !ps.isDestroyed()) {
                 // ps.destroy();
-                ps.show = false;
+                // ps.show = false;
+                if (_viewer.scene.primitives.contains(ps)) {
+                    _viewer.scene.primitives.remove(ps);
+                }
 
                 if (ps.psType == "rain" || ps.psType == "snow") {
                     //天气类粒子效果需恢复天空
@@ -290,7 +293,10 @@ GLEParticleSystem = (function (Cesium) {
                 var ps = particleSystems[key];
                 if (ps && ps instanceof Cesium.ParticleSystem && !ps.isDestroyed()) {
                     // ps.destroy();
-                    ps.show = false;
+                    // ps.show = false;
+                    if (_viewer.scene.primitives.contains(ps)) {
+                        _viewer.scene.primitives.remove(ps);
+                    }
                 }
             }
         }
