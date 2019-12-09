@@ -112,8 +112,8 @@ GLEParticleSystem = (function (Cesium) {
             emitterRadian: 20.0, //发射器张角
             startColor: Cesium.Color.BLACK.withAlpha(0.7), //开始颜色
             endColor: Cesium.Color.BLACK.withAlpha(0.0), //结束颜色
-            emissionRate: 20, //粒子发射速率
-            lifetime: 40.0, //粒子生命周期 单位秒
+            emissionRate: 15, //粒子发射速率
+            lifetime: 60.0, //粒子生命周期 单位秒
             loop: true, //是否循环，设为false，生命周期结束的粒子也结束了
             speedRange: [0.5, 1.5], //速度范围
 
@@ -264,7 +264,23 @@ GLEParticleSystem = (function (Cesium) {
         }
         return null;
     }
+    /**
+     * 移除粒子效果
+     */
+    _.prototype.removeParticleSystem = function (tag) {
+        if (particleSystems.hasOwnProperty(tag)) {
+            var ps = particleSystems[tag];
+            if (ps && ps instanceof Cesium.ParticleSystem && !ps.isDestroyed()) {
+                // ps.destroy();
+                ps.show = false;
 
+                if (ps.psType == "rain" || ps.psType == "snow") {
+                    //天气类粒子效果需恢复天空
+                    setSceneSkyAndFog(defaultSkyAndFog);
+                }
+            }
+        }
+    }
     /**
      * 清除所有粒子效果
      */

@@ -8,6 +8,8 @@
  */
 GLEImmersionRoaming = (function (Cesium) {
     var _viewer, _scene, _canvas, _camera;
+    var cameraHorizontal, cameraVertical;
+    var rayHorizontal, rayVertical;
 
     var defaultConfig = {
         lookFactor: .2, //调整视角速度
@@ -38,10 +40,43 @@ GLEImmersionRoaming = (function (Cesium) {
         _scene = _viewer.scene;
         _canvas = _viewer.canvas;
         _camera = _viewer.camera;
+
+        cameraHorizontal = new Cesium.Camera(scene);
+        cameraVertical = new Cesium.Camera(scene);
+
+        cameraHorizontal.position = _camera.position.clone();
+        cameraHorizontal.direction = _camera.direction.clone();
+        cameraHorizontal.up = _camera.up.clone();
+        cameraHorizontal.frustum.fov = _camera.frustum.fov;
+        cameraHorizontal.frustum.near = _camera.frustum.near;
+        cameraHorizontal.frustum.far = _camera.frustum.far;
+
+        var directionVertical = Cesium.Cartesian3.negate(Cesium.Cartesian3.UNIT_Z, new Cesium.Cartesian3());
+        cameraVertical.position = _camera.position.clone();
+        cameraVertical.direction = directionVertical;
+        cameraVertical.up = _camera.up.clone();
+        cameraVertical.frustum.fov = _camera.frustum.fov;
+        cameraVertical.frustum.near = _camera.frustum.near;
+        cameraVertical.frustum.far = _camera.frustum.far;
+
+
+        if (!Cesium.defined(rayHorizontal)) {
+            rayHorizontal = new Cesium.Ray(_camera.position.clone(), _camera.direction.clone())
+        } else {
+            rayHorizontal.origin = _camera.position.clone();
+            rayHorizontal.direction = _camera.direction.clone();
+        }
+
+        if (!Cesium.defined(rayVertical)) {
+            rayVertical = new Cesium.Ray(_camera.position.clone(), directionVertical.clone())
+        } else {
+            rayVertical.origin = _camera.position.clone();
+            rayVertical.direction = directionVertical.clone();
+        }
     }
 
     //获取视角
-    function getCamera () {
+    function getCamera() {
         return {
             position: _camera.position, //位置
             direction: _camera.direction, //方向
@@ -228,6 +263,25 @@ GLEImmersionRoaming = (function (Cesium) {
         if (flags.moveRight) {
             _camera.moveRight(config.moveRate);
         }
+        cameraHorizontal.position = _camera.position.clone();
+        cameraHorizontal.direction = direction.clone();
+        rayHorizontal.origin = _camera.position.clone();
+        rayHorizontal.direction = direction.clone();
+
+        cameraVertical.position = _camera.position.clone();
+        cameraVertical.direction = direction.clone();
+        cameraVertical.lookDown(Cesium.Math.toRadians(-90.0));
+        rayVertical.origin = _camera.position.clone();
+        rayVertical.direction = cameraVertical.direction.clone();
+
+        // var dot  = new Cesium.Cartesian3();
+        // Cesium.Cartesian3.dot(cameraHorizontal.direction.clone(),cameraVertical.direction.clone(),dot);
+        // console.log(cameraHorizontal.direction.equals(cameraVertical.direction),dot);
+        
+        //水平方向
+        // cameraHorizontal.getPickRay(windowPosition, rayHorizontal)
+        //垂直方向
+        // cameraVertical.getPickRay(windowPosition, rayVertical)
     }
 
     function iREvents(clock) {
