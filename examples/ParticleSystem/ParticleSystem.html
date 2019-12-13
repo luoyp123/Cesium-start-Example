@@ -40,6 +40,10 @@
             <button id="fire">火焰</button> <button id="smoke">烟雾</button>
             <button id="Fountain">喷泉</button>
         </div>
+        <span><strong>移除</strong></span>
+        <div class="nowrap">
+            <button id="cleanAll">移除所有</button>
+        </div>
         <br>
         <div class="nowrap">
             <label>已经设置默认视角在中国</label>
@@ -158,50 +162,6 @@
                             emissionRate: 1000,
                             position: position, //可选
                         })
-
-
-                        // // rain
-                        // var rainParticleSize = 15.0;
-                        // var rainRadius = 1000.0;
-                        // var rainImageSize = new Cesium.Cartesian2(rainParticleSize, rainParticleSize * 2.0);
-
-                        // var rainGravityScratch = new Cesium.Cartesian3();
-                        // var rainUpdate = function (particle, dt) {
-                        //     rainGravityScratch = Cesium.Cartesian3.normalize(particle.position,
-                        //         rainGravityScratch);
-                        //     rainGravityScratch = Cesium.Cartesian3.multiplyByScalar(rainGravityScratch, -
-                        //         1050.0,
-                        //         rainGravityScratch);
-
-                        //     particle.position = Cesium.Cartesian3.add(particle.position, rainGravityScratch,
-                        //         particle.position);
-
-                        //     var distance = Cesium.Cartesian3.distance(scene.camera.position, particle
-                        //         .position);
-                        //     if (distance > rainRadius) {
-                        //         particle.endColor.alpha = 0.0;
-                        //     } else {
-                        //         particle.endColor.alpha = rainSystem.endColor.alpha / (distance /
-                        //             rainRadius + 0.1);
-                        //     }
-                        // };
-
-                        // rainSystem = new Cesium.ParticleSystem({
-                        //     modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position),
-                        //     speed: -1.0,
-                        //     lifetime: 15.0,
-                        //     emitter: new Cesium.SphereEmitter(rainRadius),
-                        //     startScale: 1.0,
-                        //     endScale: 0.5,
-                        //     image: '../../assets/img/circular_particle.png',
-                        //     emissionRate: 9000.0,
-                        //     startColor: new Cesium.Color(0.27, 0.6, 0.80, 0.5),
-                        //     endColor: new Cesium.Color(0.27, 0.6, 0.80, 1.0),
-                        //     imageSize: rainImageSize,
-                        //     updateCallback: rainUpdate
-                        // });
-
-                        // api.scene.primitives.add(rainSystem);
                     }
 
                     break;
@@ -223,53 +183,6 @@
                             emissionRate: 1000,
                             position: position, //可选
                         })
-
-
-                        // // snow
-                        // var snowParticleSizeMin = 12.0;
-                        // var snowParticleSizeMax = snowParticleSizeMin * 2.0;
-                        // var snowRadius = 1000.0;
-                        // var minimumSnowImageSize = new Cesium.Cartesian2(snowParticleSizeMin,
-                        //     snowParticleSizeMin);
-                        // var maximumSnowImageSize = new Cesium.Cartesian2(snowParticleSizeMax,
-                        //     snowParticleSizeMax);
-
-                        // var snowGravityScratch = new Cesium.Cartesian3();
-                        // var snowUpdate = function (particle, dt) {
-                        //     snowGravityScratch = Cesium.Cartesian3.normalize(particle.position,
-                        //         snowGravityScratch);
-                        //     Cesium.Cartesian3.multiplyByScalar(snowGravityScratch, Cesium.Math
-                        //         .randomBetween(-30.0, -300.0), snowGravityScratch);
-                        //     particle.velocity = Cesium.Cartesian3.add(particle.velocity, snowGravityScratch,
-                        //         particle.velocity);
-
-                        //     var distance = Cesium.Cartesian3.distance(scene.camera.position, particle
-                        //         .position);
-                        //     if (distance > snowRadius) {
-                        //         particle.endColor.alpha = 0.0;
-                        //     } else {
-                        //         particle.endColor.alpha = snowSystem.endColor.alpha / (distance /
-                        //             snowRadius + 0.1);
-                        //     }
-                        // };
-
-                        // snowSystem = new Cesium.ParticleSystem({
-                        //     modelMatrix: new Cesium.Matrix4.fromTranslation(scene.camera.position),
-                        //     minimumSpeed: -0.1,
-                        //     maximumSpeed: 0.0,
-                        //     lifetime: 20.0,
-                        //     emitter: new Cesium.SphereEmitter(snowRadius),
-                        //     startScale: 0.5,
-                        //     endScale: 2.0,
-                        //     image: '../../assets/img/snowflake_particle.png',
-                        //     emissionRate: 9000.0,
-                        //     startColor: Cesium.Color.WHITE.withAlpha(0.3),
-                        //     endColor: Cesium.Color.WHITE.withAlpha(1.0),
-                        //     minimumImageSize: minimumSnowImageSize,
-                        //     maximumImageSize: maximumSnowImageSize,
-                        //     updateCallback: snowUpdate
-                        // });
-                        // api.scene.primitives.add(snowSystem);
                     }
                     break;
                 case "fog":
@@ -282,52 +195,6 @@
                     if (fireSystem && !fireSystem.isComplete && !fireSystem.isDestroyed()) {
                         fireSystem.show = true;
                     } else {
-                        // fireSystem = new Cesium.ParticleSystem({
-                        //     //贴图
-                        //     image: '../../assets/img/fire.png',
-
-                        //     //粒子发射器 锥形发射器
-                        //     emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(20.0)),
-
-                        //     //颜色
-                        //     // color:Cesium.Color.RED,
-                        //     startColor: Cesium.Color.YELLOW.withAlpha(0.85),
-                        //     endColor: Cesium.Color.DARKORANGE.withAlpha(0.0),
-
-                        //     //尺寸
-                        //     startScale: 1.0,
-                        //     endScale: 4.0,
-                        //     // imageSize: new Cesium.Cartesian2(40, 40),//图片尺寸
-                        //     minimumImageSize: new Cesium.Cartesian2(20.0, 20.0),
-                        //     maximumImageSize: new Cesium.Cartesian2(40.0, 40.0),
-
-                        //     //粒子生命周期
-                        //     lifetime: 16.0,
-                        //     loop: true,
-                        //     // particleLife: 15.0,
-                        //     // minimumParticleLife: 10.0,
-                        //     // maximumParticleLife: 20.0,
-
-                        //     //速度
-                        //     // speed: 5.0,
-                        //     minimumSpeed: 1.0,
-                        //     maximumSpeed: 3.0,
-
-                        //     //粒子产生速率  
-                        //     emissionRate: 15.0,
-
-                        //     //粒子发生位置
-                        //     modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
-                        //     // modelEntity.computeModelMatrix(viewer.clock.startTime,
-                        //     //     new Cesium.Matrix4()
-                        //     // ),
-                        //     //粒子发射器位置矩阵
-                        //     emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
-                        // });
-                        // console.log(fireSystem);
-                        // var s = api.scene.primitives.add(fireSystem);
-                        // console.log(s);
-
                         fireSystem = ps.addParticleSystem("123456", "fire", {
                             image: '../../assets/img/fire.png',
                             emitterRadian: 20.0,
@@ -367,46 +234,6 @@
                     if (smokeSystem && !smokeSystem.isComplete && !smokeSystem.isDestroyed()) {
                         smokeSystem.show = true;
                     } else {
-                        // smokeSystem = new Cesium.ParticleSystem({
-                        //     //贴图
-                        //     image: '../../assets/img/smoke.png',
-
-                        //     //粒子发射器 锥形发射器
-                        //     emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(20.0)),
-
-                        //     //颜色
-                        //     startColor: Cesium.Color.BLACK.withAlpha(0.7),
-                        //     endColor: Cesium.Color.BLACK.withAlpha(0.2),
-
-                        //     //尺寸
-                        //     startScale: 1.0,
-                        //     endScale: 6.0,
-                        //     // imageSize: new Cesium.Cartesian2(40, 40),//图片尺寸
-                        //     minimumImageSize: new Cesium.Cartesian2(20.0, 20.0),
-                        //     maximumImageSize: new Cesium.Cartesian2(40.0, 40.0),
-
-                        //     //粒子生命周期
-                        //     lifetime: 40.0,
-                        //     loop: true, //是否循环，
-                        //     // particleLife: 15.0,
-                        //     // minimumParticleLife: 10.0,
-                        //     // maximumParticleLife: 20.0,
-
-                        //     //速度
-                        //     // speed: 5.0,
-                        //     minimumSpeed: 0.5,
-                        //     maximumSpeed: 1.5,
-
-                        //     //粒子产生速率  
-                        //     emissionRate: 10.0,
-
-                        //     //粒子发生位置
-                        //     modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
-                        //     //粒子发射器位置矩阵
-                        //     emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
-                        // });
-                        // api.scene.primitives.add(smokeSystem);
-
                         smokeSystem = ps.addParticleSystem("123457", "smoke", {
                             image: '../../assets/img/smoke.png',
                             emitterRadian: 20.0,
@@ -419,52 +246,6 @@
                     if (FountainSystem && !FountainSystem.isComplete && !FountainSystem.isDestroyed()) {
                         FountainSystem.show = true;
                     } else {
-                        // var position = new Cesium.Cartesian3();
-                        // modelEntity.position.getValueInReferenceFrame(Cesium.JulianDate.now(), Cesium
-                        //     .ReferenceFrame.FIXED, position);
-                        // Cesium.Cartesian3.add(position, new Cesium.Cartesian3(10, 10, 10), position);
-                        // FountainSystem = new Cesium.ParticleSystem({
-                        //     //贴图
-                        //     image: '../../assets/img/fountain.png',
-
-                        //     //粒子发射器 锥形发射器
-                        //     emitter: new Cesium.ConeEmitter(Cesium.Math.toRadians(6.0)),
-
-                        //     //颜色
-                        //     startColor: new Cesium.Color(1, 1, 1, 0.8),
-                        //     endColor: new Cesium.Color(0.80, 0.86, 1, 0.6),
-                        //     //尺寸
-                        //     startScale: 1.0,
-                        //     endScale: 20.0,
-                        //     imageSize: new Cesium.Cartesian2(5.0, 5.0),
-
-                        //     //粒子生命周期
-                        //     lifetime: 16.0,
-                        //     loop: true, //是否循环，
-                        //     // particleLife: 15.0,
-                        //     minimumParticleLife: 6,
-                        //     maximumParticleLife: 7,
-
-                        //     //速度
-                        //     // speed: 5.0,
-                        //     minimumSpeed: 9.0,
-                        //     maximumSpeed: 9.5,
-
-                        //     //粒子产生速率  
-                        //     emissionRate: 100.0,
-
-                        //     //粒子发生位置
-                        //     modelMatrix: computeModelMatrix(modelEntity, Cesium.JulianDate.now()),
-                        //     // modelMatrix: computeModelMatrix(new Cesium.ConstantPositionProperty(
-                        //     //     position, Cesium.ReferenceFrame.FIXED), Cesium.JulianDate.now()),
-                        //     //粒子发射器位置矩阵
-                        //     emitterModelMatrix: computeEmitterModelMatrix(0, 0, 0), //设置偏移为0
-
-                        //     updateCallback: applyGravity,
-                        // });
-                        // api.scene.primitives.add(FountainSystem);
-
-
                         FountainSystem = ps.addParticleSystem("123458", "fountain", {
                             image: '../../assets/img/fountain.png',
                             emitterRadian: 5.0,
@@ -473,21 +254,13 @@
                         })
                     }
                     break;
+                case "cleanAll": //移除所有
+                    ps.cleanAllParticleSystem();
+                    break;
                 default:
                     break;
             }
         });
-
-        // function applyGravity(p, dt) {
-        //     var gravityScratch = new Cesium.Cartesian3();
-        //     // We need to compute a local up vector for each particle in geocentric space.
-        //     var position = p.position;
-
-        //     Cesium.Cartesian3.normalize(position, gravityScratch);
-        //     Cesium.Cartesian3.multiplyByScalar(gravityScratch, -3.5 * dt, gravityScratch);
-
-        //     p.velocity = Cesium.Cartesian3.add(p.velocity, gravityScratch, p.velocity);
-        // }
 
         var DatGuiConfig = {
             rain: {

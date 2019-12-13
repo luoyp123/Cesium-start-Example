@@ -7,16 +7,26 @@
  * @param {*} Cesium
  */
 GLEImmersionRoaming = (function (Cesium) {
-    var _viewer, _scene, _canvas, _camera;
-    var cameraHorizontal, cameraVertical;
+    var _viewer, _scene, _canvas, _camera, _globe;
+    // var cameraHorizontal, cameraVertical;
     var rayHorizontal, rayVertical;
+    // var windowPosition = new Cesium.Cartesian2();
 
     var defaultConfig = {
         lookFactor: .2, //调整视角速度
-        moveRate: 0.5, //移动速度
+        moveRate: 0.5, //水平移动速度
+        horizontalDistance: 1.0, //水平碰撞距离，单位米
+        gravityRate: 9.8, //重力方向加速度
         footerHeight: 2.0, //相机距地2.0米高度
     };
-    var config = defaultConfig;
+    var _config = defaultConfig;
+
+    var isLanded = false;
+    var velocity = new Cesium.Cartesian3(
+        /*前进+x/后退-x,
+          向右+y/向左-y,
+          向上+z/向下-z*/
+    ); //移动速度变量
 
     //创建变量来记录当前的鼠标位置，以及用于跟踪相机如何移动的标志
     var startMousePosition; //开始时鼠标位置
@@ -40,25 +50,29 @@ GLEImmersionRoaming = (function (Cesium) {
         _scene = _viewer.scene;
         _canvas = _viewer.canvas;
         _camera = _viewer.camera;
+        _globe = _viewer.scene.globe;
 
-        cameraHorizontal = new Cesium.Camera(scene);
-        cameraVertical = new Cesium.Camera(scene);
+        _scene.screenSpaceCameraController.enableCollisionDetection = true;
 
-        cameraHorizontal.position = _camera.position.clone();
-        cameraHorizontal.direction = _camera.direction.clone();
-        cameraHorizontal.up = _camera.up.clone();
-        cameraHorizontal.frustum.fov = _camera.frustum.fov;
-        cameraHorizontal.frustum.near = _camera.frustum.near;
-        cameraHorizontal.frustum.far = _camera.frustum.far;
+        // Cesium.Cartesian2.clone(new Cesium.Cartesian2(_canvas.width / 2, _canvas.height / 2), windowPosition)
+
+        // cameraHorizontal = new Cesium.Camera(scene);
+        // cameraVertical = new Cesium.Camera(scene);
+
+        // cameraHorizontal.position = _camera.position.clone();
+        // cameraHorizontal.direction = _camera.direction.clone();
+        // cameraHorizontal.up = _camera.up.clone();
+        // cameraHorizontal.frustum.fov = _camera.frustum.fov;
+        // cameraHorizontal.frustum.near = _camera.frustum.near;
+        // cameraHorizontal.frustum.far = _camera.frustum.far;
 
         var directionVertical = Cesium.Cartesian3.negate(Cesium.Cartesian3.UNIT_Z, new Cesium.Cartesian3());
-        cameraVertical.position = _camera.position.clone();
-        cameraVertical.direction = directionVertical;
-        cameraVertical.up = _camera.up.clone();
-        cameraVertical.frustum.fov = _camera.frustum.fov;
-        cameraVertical.frustum.near = _camera.frustum.near;
-        cameraVertical.frustum.far = _camera.frustum.far;
-
+        // cameraVertical.position = _camera.position.clone();
+        // cameraVertical.direction = directionVertical;
+        // cameraVertical.up = _camera.up.clone();
+        // cameraVertical.frustum.fov = _camera.frustum.fov;
+        // cameraVertical.frustum.near = _camera.frustum.near;
+        // cameraVertical.frustum.far = _camera.frustum.far;
 
         if (!Cesium.defined(rayHorizontal)) {
             rayHorizontal = new Cesium.Ray(_camera.position.clone(), _camera.direction.clone())
@@ -120,7 +134,7 @@ GLEImmersionRoaming = (function (Cesium) {
     _.prototype.setConfig = function (options) {
         for (var o in options) {
             if (options.hasOwnProperty(o))
-                config[o] = options[o];
+                _config[o] = options[o];
         }
     }
     /**
@@ -138,7 +152,7 @@ GLEImmersionRoaming = (function (Cesium) {
         var degrees = cartesian3ToWgs84(position);
         //调整视角水平、高程为2米
         _camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(degrees[0], degrees[1], config.footerHeight),
+            destination: Cesium.Cartesian3.fromDegrees(degrees[0], degrees[1], _config.footerHeight),
             orientation: {
                 heading: Cesium.Math.toRadians(heading),
                 pitch: Cesium.Math.toRadians(0.0),
@@ -218,9 +232,9 @@ GLEImmersionRoaming = (function (Cesium) {
             var x = (mousePosition.x - startMousePosition.x) / width;
             var y = -(mousePosition.y - startMousePosition.y) / height;
             //如果相机没有在2D模式下，则以弧度沿其上向量的相反方向围绕其右向量旋转
-            var heading = Cesium.Math.toDegrees(currentCamera.heading) + Cesium.Math.toDegrees(x * config.lookFactor);
+            var heading = Cesium.Math.toDegrees(currentCamera.heading) + Cesium.Math.toDegrees(x * _config.lookFactor);
             //如果相机没有在2D模式下，则沿其右向量的相反方向围绕其up轴旋转
-            var pitch = Cesium.Math.toDegrees(currentCamera.pitch) + Cesium.Math.toDegrees(y * config.lookFactor);
+            var pitch = Cesium.Math.toDegrees(currentCamera.pitch) + Cesium.Math.toDegrees(y * _config.lookFactor);
             _camera.setView({
                 destination: currentCamera.position,
                 orientation: {
@@ -230,6 +244,37 @@ GLEImmersionRoaming = (function (Cesium) {
                 }
             });
         }
+
+        /*
+                    +z          +y
+                    │         ╱
+                    │       ╱
+                    │     ╱
+                    │   ╱     
+                    │ ╱
+     -x ────────────┼──────────────── +x
+                  ╱ │
+                ╱   │
+              ╱     │
+            -y        -z
+
+        */
+
+        //前进后退
+        // if (flags.moveForward || flags.moveBackward) {
+            velocity.x -= velocity.x * 0.5;
+        // }
+        //左右移动
+        // if (flags.moveLeft || flags.moveRight) {
+            velocity.y -= velocity.y * 0.5;
+        // }
+        //上下移动
+        if (!isLanded) {//未落地 上下移动无效
+            velocity.z -= 9.8 * 5.0; //没落地 默认下降的速度
+        } 
+        // else if (flags.moveUp || flags.moveDown) {
+        //     velocity.z -= velocity.z * 0.5; //手动调节跳跃速度
+        // }
 
         // currentCamera.position;
         // if (flags.moveForward) {
@@ -246,43 +291,105 @@ GLEImmersionRoaming = (function (Cesium) {
         // drawRayHelper(viewer,ray);
 
         if (flags.moveForward) {
-            _camera.move(direction, config.moveRate);
+            _camera.move(direction, _config.moveRate);
         }
         if (flags.moveBackward) {
-            _camera.move(direction, -config.moveRate);
+            _camera.move(direction, -_config.moveRate);
         }
         if (flags.moveUp) {
-            _camera.moveUp(config.moveRate);
+            _camera.moveUp(_config.moveRate);
         }
         if (flags.moveDown) {
-            _camera.moveDown(config.moveRate);
+            _camera.moveDown(_config.moveRate);
         }
         if (flags.moveLeft) {
-            _camera.moveLeft(config.moveRate);
+            _camera.moveLeft(_config.moveRate);
         }
         if (flags.moveRight) {
-            _camera.moveRight(config.moveRate);
+            _camera.moveRight(_config.moveRate);
         }
-        cameraHorizontal.position = _camera.position.clone();
-        cameraHorizontal.direction = direction.clone();
+
+
+        // cameraHorizontal.position = _camera.position.clone();
+        // cameraHorizontal.direction = direction.clone();
         rayHorizontal.origin = _camera.position.clone();
         rayHorizontal.direction = direction.clone();
 
-        cameraVertical.position = _camera.position.clone();
-        cameraVertical.direction = direction.clone();
-        cameraVertical.lookDown(Cesium.Math.toRadians(-90.0));
+        // cameraVertical.position = _camera.position.clone();
+        // cameraVertical.direction = direction.clone();
+        // cameraVertical.lookDown(Cesium.Math.toRadians(90.0));
         rayVertical.origin = _camera.position.clone();
-        rayVertical.direction = cameraVertical.direction.clone();
+        // rayVertical.direction = cameraVertical.direction.clone();
+        var gDirection = new Cesium.Cartesian3();
+        Cesium.Cartesian3.negate(_camera.position.clone(), gDirection);
+        var gDirectionNormalize = new Cesium.Cartesian3();
+        Cesium.Cartesian3.normalize(gDirection, gDirectionNormalize)
+        rayVertical.direction = gDirectionNormalize;
 
         // var dot  = new Cesium.Cartesian3();
         // Cesium.Cartesian3.dot(cameraHorizontal.direction.clone(),cameraVertical.direction.clone(),dot);
         // console.log(cameraHorizontal.direction.equals(cameraVertical.direction),dot);
-        
+
         //水平方向
         // cameraHorizontal.getPickRay(windowPosition, rayHorizontal)
         //垂直方向
         // cameraVertical.getPickRay(windowPosition, rayVertical)
+        var pointHorizontal = new Cesium.Cartesian3();
+        var pointVertical = new Cesium.Cartesian3();
+
+        // var defaultConfig = {
+        //     lookFactor: .2, //调整视角速度
+        //     moveRate: 1.0, //水平移动速度
+        //     horizontalDistance:0.5,//水平碰撞距离，单位米
+        //     gravityRate:9.8,//重力方向加速度
+        //     footerHeight: 2.0, //相机距地2.0米高度
+        // };
+        // var config = defaultConfig;
+
+        //发射线与场景中碰撞得到第一个碰撞结果，
+        //碰撞到场景中3D瓦片模型，返回碰撞结果，包括碰撞到的模型及位置
+        //未检测到碰撞返回undefined,
+        //碰撞地形返回object是undefined,但position有值
+        var resultHorizontal = _scene.pickFromRay(rayHorizontal /*,[],0.1*/ );
+        var resultGravity = _scene.pickFromRay(rayVertical /*,[],0.1*/ );
+
+        if (Cesium.defined(resultHorizontal) && Cesium.defined(resultHorizontal.position)) { //水平方向碰撞到东西了
+            pointHorizontal = resultHorizontal.position.clone();
+        }
+        if (Cesium.defined(resultGravity) && Cesium.defined(resultGravity.position)) { //重力方向碰撞到东西了
+            pointVertical = resultGravity.position.clone();
+        }
+
+        var currentCameraPosition = _camera.position.clone();
+
+        //计算碰撞点与相机位置之间的距离
+        var distanceHorizontal = Cesium.Cartesian3.distance(currentCameraPosition, pointHorizontal);
+        var distanceVertical = Cesium.Cartesian3.distance(currentCameraPosition, pointVertical);
+
+        //水平碰撞距离小于最小水平碰撞距离 => 已碰撞
+        if (distanceHorizontal < _config.horizontalDistance) {
+            console.log("水平已碰撞")
+        }
+        //上次检测未落地，本次重力碰撞距离小于最小重力碰撞距离 => 已碰撞 -> 已落地
+        if (!isLanded && distanceVertical < _config.footerHeight) {
+            isLanded = true;
+            console.log("重力已碰撞")
+            var degrees = cartesian3ToWgs84(_camera.position.clone());
+            _camera.setView({
+                destination: Cesium.Cartesian3.fromDegrees(degrees[0], degrees[1], _config.footerHeight),
+                orientation: {
+                    heading: _camera.heading,
+                    pitch: _camera.pitch,
+                    roll: 0.0
+                }
+            });
+        }
     }
+    //测试用
+    // _.prototype.drawRayHelper = function () {
+    //     drawRayHelper(_viewer,rayHorizontal);
+    //     drawRayHelper(_viewer,rayVertical);
+    // }
 
     function iREvents(clock) {
         _canvas.setAttribute('tabindex', '0');

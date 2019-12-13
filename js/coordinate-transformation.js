@@ -151,7 +151,7 @@ function drawRayHelper(viewer, ray) {
 
     var result = new Cesium.Cartesian3();
     // getPositionByOriginDirectionAndDistance(ray.origin, ray.direction, 2.0, result);
-    Cesium.Ray.getPoint(ray, 2.0, result)
+    Cesium.Ray.getPoint(ray, 20.0, result)
     // result.z = ray.origin.z;
     var curLinePointsArr = [];
 
@@ -162,10 +162,11 @@ function drawRayHelper(viewer, ray) {
 
     var polyline = viewer.entities.getById('id-ray-helper');
     if (!polyline) {
+        var random = Math.random();
         var purpleArrow = viewer.entities.add({
-            id: 'id-ray-helper',
-            description: 'ray-helper',
-            name: 'ray-helper',
+            id: 'id-ray-helper'+random,
+            description: 'ray-helper'+random,
+            name: 'ray-helper'+random,
             polyline: {
                 positions: Cesium.Cartesian3.fromDegreesArrayHeights(curLinePointsArr),
                 width: 10,
