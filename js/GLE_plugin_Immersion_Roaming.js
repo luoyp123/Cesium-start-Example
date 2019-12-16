@@ -125,10 +125,12 @@ GLEImmersionRoaming = (function (Cesium) {
      * 配置
      * 
      * var options = {
-     *    lookFactor : .2,//调整视角速度
-     *    moveRate : .2,//移动速度
-     *    footerHeight : 2.0//相机距地高度
-     * }
+            lookFactor: .2, //调整视角速度
+            moveRate: 0.5, //水平移动速度
+            horizontalDistance: 1.0, //水平碰撞距离，单位米
+            gravityRate: 9.8, //重力方向加速度
+            footerHeight: 2.0, //相机距地2.0米高度
+        };
      * @param {Object} options 配置信息
      */
     _.prototype.setConfig = function (options) {
