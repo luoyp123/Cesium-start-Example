@@ -1,6 +1,6 @@
 /**坐标转换 */
 function defined(value) {
-    return value !== undefined && value !== null;
+    return value !== undefined && value !== null && value !== "";
 }
 
 function getCamera(camera) {
@@ -139,7 +139,7 @@ function getPositionByOriginDirectionAndDistance(origin, direction, distance, re
  * @param {Cesium.Viewer} viewer 
  * @param {Cesium.Ray} ray 射线
  */
-function drawRayHelper(viewer, ray) {
+function drawRayHelper(viewer, ray, color) {
     if (!Cesium.defined(viewer)) {
         console.error("viewer must not be null.");
         return;
@@ -164,14 +164,14 @@ function drawRayHelper(viewer, ray) {
     if (!polyline) {
         var random = Math.random();
         var purpleArrow = viewer.entities.add({
-            id: 'id-ray-helper'+random,
-            description: 'ray-helper'+random,
-            name: 'ray-helper'+random,
+            id: 'id-ray-helper' + random,
+            description: 'ray-helper' + random,
+            name: 'ray-helper' + random,
             polyline: {
                 positions: Cesium.Cartesian3.fromDegreesArrayHeights(curLinePointsArr),
                 width: 10,
                 arcType: Cesium.ArcType.NONE,
-                material: new Cesium.PolylineArrowMaterialProperty(Cesium.Color.PURPLE)
+                material: new Cesium.PolylineArrowMaterialProperty(Cesium.defined(color) ? color : Cesium.Color.PURPLE)
             }
         });
 

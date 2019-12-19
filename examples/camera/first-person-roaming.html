@@ -27,6 +27,7 @@
         <div class="nowrap">
             <button id="startRoaming">开始漫游</button>
             <button id="endRoaming">结束漫游</button>
+            <button id="resetCamera">调正视角</button>
         </div>
         <br>
         <div class="nowrap">
@@ -35,7 +36,8 @@
             按住键盘 Q上升 | E下降<br>
             完成:WASD移动方向调整，沿水平面，<br>
             不允许上天入地，模拟人物行走视角。<br>
-            TODO:漫游时，与场景中3D模型的碰撞检测<br>
+            漫游时，与场景中3D模型的碰撞检测，<br>
+            TODO，重力碰撞检测，<br>
         </div>
         <br>
         <div class="nowrap">
@@ -47,6 +49,7 @@
     <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
     <script src="../../js/navigation.js"></script>
     <script src="../../js/API.js"></script>
+    <script src="../../js/keyCode.js"></script>
     <script src="../../js/coordinate-transformation.js"></script>
     <!-- <script src="../../js/GLE_Immersion_Roaming.js"></script> -->
     <!-- <script src="../../js/GLE_Picking.js"></script> -->
@@ -129,11 +132,17 @@
                     break;
                 case "startRoaming": //开始漫游
                     // ImmersionRoamingStart();
-                    IR.start();
+                    if (defined(IR))
+                        IR.start();
                     break;
                 case "endRoaming": //结束漫游
                     // ImmersionRoamingStop();
-                    IR.stop();
+                    if (defined(IR))
+                        IR.stop();
+                    break;
+                case "resetCamera": //调正视角，在环视四周时想调整视角到水平
+                    if (defined(IR))
+                        IR.resetCamera();
                     break;
                 default:
                     break;
