@@ -37,7 +37,9 @@ function cartesian3ToCartesian2(cartesian3) {
 }
 //三维坐标到地理坐标的转换
 function cartesian3ToCartographic(cartesian3) {
-    return scene.globe.ellipsoid.cartesianToCartographic(cartesian3); //其中cartesian3为一个Cesium.Cartesian3。
+    if (Cesium.defined(cartesian3) && Cesium.Cartesian3.distance(cartesian3, new Cesium.Cartesian3()) > 0)
+        return scene.globe.ellipsoid.cartesianToCartographic(cartesian3); //其中cartesian3为一个Cesium.Cartesian3。
+    else console.log("cartesian3 must not null or ZERO");
 }
 //地理坐标到经纬度坐标的转换
 function cartographicToWgs84(cartographic) {
@@ -46,7 +48,8 @@ function cartographicToWgs84(cartographic) {
 //三维坐标到经纬度坐标的转换
 function cartesian3ToWgs84(cartesian3) {
     var cartographic = cartesian3ToCartographic(cartesian3);
-    return [cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180, cartographic.height];
+    if (Cesium.defined(cartographic))
+        return [cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180, cartographic.height];
 }
 //经纬度坐标转地理坐标（弧度）
 function wgs84ToCartographic(point) {

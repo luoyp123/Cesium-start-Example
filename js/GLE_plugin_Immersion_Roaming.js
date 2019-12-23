@@ -43,6 +43,7 @@ GLEImmersionRoaming = (function (Cesium) {
         moveRight: false
     };
     var objectsToExclude = [];
+    var inited = false;
     var handler;
 
     function _(viewer) {
@@ -185,6 +186,9 @@ GLEImmersionRoaming = (function (Cesium) {
                 heading: Cesium.Math.toRadians(heading),
                 pitch: Cesium.Math.toRadians(0.0),
                 roll: 0.0
+            },
+            complete: function () {
+                inited = true;
             }
         });
     }
@@ -271,6 +275,7 @@ GLEImmersionRoaming = (function (Cesium) {
     }
 
     function iRClockOnTickEventListener(clock) {
+        if (!inited) return;//初始化完成后
         var currentCamera = getCamera();
         if (flags.looking) {
             var width = _canvas.clientWidth;
@@ -410,10 +415,10 @@ GLEImmersionRoaming = (function (Cesium) {
         var resultY = _scene.pickFromRay(rayY, objectsToExclude /*,0.1*/ );
         var resultGravity = _scene.pickFromRay(rayZ, objectsToExclude /*,0.1*/ );
 
-        if (Cesium.defined(resultX) && Cesium.defined(resultX.position)) { //水平方向碰撞到东西了
+        if (Cesium.defined(resultX) && Cesium.defined(resultX.position)) { //水平前后方向碰撞到东西了
             pointX = resultX.position.clone();
         }
-        if (Cesium.defined(resultY) && Cesium.defined(resultY.position)) { //水平方向碰撞到东西了
+        if (Cesium.defined(resultY) && Cesium.defined(resultY.position)) { //水平左右方向碰撞到东西了
             pointY = resultY.position.clone();
         }
 
@@ -444,32 +449,33 @@ GLEImmersionRoaming = (function (Cesium) {
         }
 
         //上次检测未落地，本次重力碰撞距离小于最小重力碰撞距离 => 已碰撞 -> 已落地
-        if (!isLanded && distanceVertical < _config.footerHeight) {
+        if (!isLanded && distanceVertical < _config.footerHeight+2&&distanceVertical > _config.footerHeight-2) {
             isLanded = true;
             console.log("重力已碰撞");
             velocity.z = 0;
-            var distance = Cesium.Cartesian3.distance(pointVertical, new Cesium.Cartesian3());
-            if (distance > 0) {
-                var degrees = cartesian3ToWgs84(pointVertical);
-                _camera.setView({
-                    destination: Cesium.Cartesian3.fromDegrees(degrees[0], degrees[1], degrees[2] + _config.footerHeight),
-                    orientation: {
-                        heading: _camera.heading,
-                        pitch: _camera.pitch,
-                        roll: 0.0
-                    }
-                });
-            }
+            //沉到地下时返回(0,0,0)
+            // var distance = Cesium.Cartesian3.distance(pointVertical, new Cesium.Cartesian3());
+            // if (distance > 0) {
+            //     var degrees = cartesian3ToWgs84(pointVertical);
+            //     console.log(degrees[2]);
+            //     // _camera.setView({
+            //     //     destination: Cesium.Cartesian3.fromDegrees(degrees[0], degrees[1], degrees[2] + _config.footerHeight),
+            //     //     orientation: {
+            //     //         heading: _camera.heading,
+            //     //         pitch: _camera.pitch,
+            //     //         roll: 0.0
+            //     //     }
+            //     // });
+            // }
         } else {
             //未落地 
             isLanded = false;
-            // velocity.z = 0;
+            // velocity.z = 0.1;
             //TODO 
-            // if (!flags.moveUp && !flags.moveDown) {
-            //     _camera.moveDown(velocity.z);
-            // }
+            if (!flags.moveUp && !flags.moveDown) {
+                _camera.moveDown(velocity.z);
+            }
         }
-
 
         if (flags.moveForward) {
             _camera.move(direction, velocity.x);
