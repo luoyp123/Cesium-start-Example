@@ -3,8 +3,8 @@
  * 粒子系统
  * @nanme Sogrey
  * 
- * @version v1
- * @param {*} Cesium
+ * @version v1.0.0
+ * @param {Cesium.Viewer} Cesium
  */
 GLEParticleSystem = (function (Cesium) {
     var _viewer, _scene, _canvas, _camera;
@@ -192,75 +192,6 @@ GLEParticleSystem = (function (Cesium) {
             !particleSystem.isDestroyed()) {
             var _config = setConfigs(particleSystem.config, config)
             return makeParticleSystem(tag, particleSystem.psType, _config)
-
-
-            // TODO
-            // for (const key in config) {
-            //     if (config.hasOwnProperty(key)) {
-            //         var value = config[key];
-
-
-
-            //         // minimumImageSize: [20.0, 20.0], //图片尺寸 width & height 最小 单位像素
-            //         // maximumImageSize: [40.0, 40.0], //图片尺寸 width & height 最大 单位像素
-            //         // startScale: 1.0, //粒子出生时大小倍率
-            //         // endScale: 6.0, //粒子死亡时大小倍率
-            //         // emitterType: 2, //发射器类型：0：BoxEmitter 盒式，1：CircleEmitter 圆形，2：ConeEmitter 圆锥，3：SphereEmitter 球体
-            //         // emitterRadian: 20.0, //发射器张角
-            //         // startColor: Cesium.Color.BLACK.withAlpha(0.7), //开始颜色
-            //         // endColor: Cesium.Color.BLACK.withAlpha(0.0), //结束颜色
-            //         // emissionRate: 20, //粒子发射速率
-            //         // lifetime: 40.0, //粒子生命周期 单位秒
-            //         // loop: true, //是否循环，设为false，生命周期结束的粒子也结束了
-            //         // speedRange: [0.5, 1.5], //速度范围
-
-            //         // position: [0, 0, 0], //【必需】位置 WGS84 坐标【经纬度（角度）、高程】，也能传入3D模型，将取模型中点位置
-            //         // positionOffset: [0, 0, 0], //偏移
-
-            //         // gravity: 0, //重力作用
-
-
-            //     }
-
-            //     particleSystem = new Cesium.ParticleSystem({
-            //         //贴图
-            //         image: _config.image,
-
-            //         //粒子发射器 锥形发射器
-            //         emitter: emitter,
-
-            //         bursts: bursts,
-
-            //         //颜色
-            //         startColor: _config.startColor instanceof Cesium.Color ? _config.startColor : new Cesium.Color(_config.startColor[0], _config.startColor[1], _config.startColor[2], _config.startColor[3]),
-            //         endColor: _config.endColor instanceof Cesium.Color ? _config.endColor : new Cesium.Color(_config.endColor[0], _config.endColor[1], _config.endColor[2], _config.endColor[3]),
-
-            //         //尺寸
-            //         startScale: _config.startScale,
-            //         endScale: _config.endScale,
-            //         minimumImageSize: new Cesium.Cartesian2(_config.minimumImageSize[0], _config.minimumImageSize[1]),
-            //         maximumImageSize: new Cesium.Cartesian2(_config.maximumImageSize[0], _config.maximumImageSize[1]),
-
-            //         //粒子生命周期
-            //         lifetime: _config.lifetime,
-            //         loop: _config.loop,
-
-            //         //速度
-            //         // speed: 5.0,
-            //         minimumSpeed: _config.speedRange[0],
-            //         maximumSpeed: _config.speedRange[1],
-
-            //         //粒子产生速率  
-            //         emissionRate: _config.emissionRate,
-
-            //         //粒子发生位置
-            //         modelMatrix: modelMatrix,
-            //         //粒子发射器位置矩阵
-            //         emitterModelMatrix: computeEmitterModelMatrix(_config.positionOffset[0], _config.positionOffset[1], _config.positionOffset[2]), //设置偏移为0
-            //         updateCallback: rainUpdate,
-            //     });
-            // }
-
         }
         return null;
     }

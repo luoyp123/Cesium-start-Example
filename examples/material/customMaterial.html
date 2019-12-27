@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Cesium 入门示例 - 流动纹理</title>
+    <title>Cesium 入门示例 - 自定义材质纹理</title>
     <style>
         @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
         @import url(../../css/index.css);
@@ -25,11 +25,17 @@
     <!-- Some input elements for our app. -->
     <div class="backdrop" id="menu">
         <div class="scrollbar"></div>
-        <h2>ParticleSystem 流动纹理</h2>
+        <h2>自定义材质纹理</h2>
         <div class="nowrap">
             <button id="view-beijing-flyto">上京城</button>
         </div>
         <br>
+        <div class="nowrap">
+            <button id="flow-lines-progressive">流动纹理线（渐进色）</button><button id="flow-lines-dotted">流动纹理线（虚线）</button>
+        </div>
+        <div class="nowrap">
+            <button id="radar-scanning">雷达扫描</button>
+        </div>
 
         <div class="nowrap">
             <label>已经设置默认视角在中国</label>
@@ -44,7 +50,7 @@
     <script src="../../js/coordinate-transformation.js"></script>
     <script src="../../js/DAT.GUI.min.js"></script>
     <script src="../../js/API.js"></script>
-    <script src="../../js/other/AnimationDashLine.js"></script>
+    <script src="../../js/GLE_plugin_AnimationFlowMaterial.js"></script>
 
     <script>
         var defaultOption = {
@@ -118,6 +124,12 @@
                         }
                     });
                     break;
+                case 'flow-lines-progressive': //流动纹理线（渐进色）
+                    break;
+                case 'flow-lines-dotted': //流动纹理线（虚线）
+                    break;
+                case 'radar-scanning': //雷达扫描
+                    break;
                 default:
                     break;
             }
@@ -136,7 +148,8 @@
             points.push(position);
             console.log(position, points.length);
             if (points.length >= 2) {
-                drawLine(api.viewer, points[points.length - 2], points[points.length - 1], Cesium.Color.GREEN,1000);
+                drawLine(api.viewer, points[points.length - 2], points[points.length - 1], Cesium.Color.GREEN,
+                    1000);
             }
         }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
     </script>

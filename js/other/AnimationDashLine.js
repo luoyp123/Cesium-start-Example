@@ -95,6 +95,7 @@ function drawLine(viewer, src, dst, color, duration) {
         description: 'trail-line',
         name: 'test',
         polyline: {
+            clampToGround : true,//贴地
             width: 10,
             positions: curLinePointsArr,
             material: new Cesium.PolylineTrailLinkMaterialProperty(color, duration)

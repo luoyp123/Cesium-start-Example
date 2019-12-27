@@ -154,7 +154,7 @@ function drawRayHelper(viewer, ray, color) {
 
     var result = new Cesium.Cartesian3();
     // getPositionByOriginDirectionAndDistance(ray.origin, ray.direction, 2.0, result);
-    Cesium.Ray.getPoint(ray, 20.0, result)
+    Cesium.Ray.getPoint(ray, 10.0, result)
     // result.z = ray.origin.z;
     var curLinePointsArr = [];
 

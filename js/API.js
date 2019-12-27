@@ -54,37 +54,41 @@ API = function (divId, options) {
         viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
             ._creditContainer); //去掉版权信息
 
+        viewer.scene.preRender.addEventListener(function () {
+            viewer.scene.camera._suspendTerrainAdjustment = false;
+        })
+
         if (!scene.pickPositionSupported) {
             console.error('This browser does not support pickPosition.');
         }
     };
     this.init();
-  
+
 };
 
 API.prototype = {
-    Model:{
-        AddModel:function(){}
+    Model: {
+        AddModel: function () {}
     },
-    Actor:{
+    Actor: {
 
     },
-    Click:{
+    Click: {
 
     },
-    View:{
+    View: {
 
     },
-    Label:{
+    Label: {
 
     },
-    Roaming:{
+    Roaming: {
 
     },
-    ParticleSystem:{
+    ParticleSystem: {
 
     },
-    Other:{
+    Other: {
 
     }
 }

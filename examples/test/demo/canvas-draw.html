@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>绘制重复图案</title>
+    <style>
+        body {
+            background: #eee;
+        }
+        #canvas {
+            background: #fff;
+            cursor: pointer;
+            margin-left: 10px;
+            margin-top: 10px;
+            -webkit-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+            -moz-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+            box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <select id="selectRepeat">
+        <option value="repeat">repeat</option>
+        <option value="repeat-x">repeat-x</option>
+        <option value="repeat-y">repeat-y</option>
+        <option value="no-repeat">no-repeat</option>
+    </select>
+    </br>
+    <canvas id="canvas" width="590" height="480"></canvas> 
+    <script>
+        let canvas = document.getElementById('canvas');
+        let context = canvas.getContext('2d');
+        let selectRepeat = document.getElementById('selectRepeat');
+        let image = new Image();
+        image.src = "../../../assets/img/arrow.png";
+ 
+        // 为选项框元素绑定事件，用户可以选择绘制图案的方式
+        selectRepeat.addEventListener('change', (event) => {
+            let repeat = event.target.value;        // 重复图案的方式
+            drawPattern(repeat);
+        });
+ 
+        function drawPattern(repeat){
+            // 创建CanvasPattern对象
+            let pattern = context.createPattern(image, repeat);
+            // 将新创建的CanvasPattern对象赋值给fillStyle属性
+            context.fillStyle = pattern;
+
+            // context.drawImage(image,0,0,590,30);
+            // 清除画布
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            // 绘制图案
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+ 
+        image.addEventListener('load', () => {
+            drawPattern("repeat");
+        });
+    </script>
+</body>
+</html>
