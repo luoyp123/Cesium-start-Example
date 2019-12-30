@@ -11,6 +11,7 @@ Cesium 入门示例
   - [控制相机漫游](https://sogrey.github.io/Cesium-start-Example/examples/camera/camera-roaming.html)
   - [[未完成]第一人称漫游](https://sogrey.github.io/Cesium-start-Example/examples/camera/first-person-roaming.html)
 - 模型
+  - [绘制对象-Entity方式](https://sogrey.github.io/Cesium-start-Example/examples/model/Entity.html)
   - [模型缩放](https://sogrey.github.io/Cesium-start-Example/examples/model/ModelScale.html)
 - 材质（Material）
   - [MaterialProperty设置模型材质](https://sogrey.github.io/Cesium-start-Example/examples/material/MaterialProperty设置模型材质.html)
