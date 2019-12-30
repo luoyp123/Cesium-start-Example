@@ -30,6 +30,16 @@
             <button id="view-beijing-flyto">上京城</button>
         </div>
         <br>
+        <div class="nowrap">
+            <button id="ColorMaterialProperty">ColorMaterialProperty颜色材质</button><br />
+            <button id="ImageMaterialProperty">ImageMaterialProperty图片纹理</button><br />
+            <button id="CheckerboardMaterialProperty">CheckerboardMaterialProperty棋盘纹理</button><br />
+            <button id="StripeMaterialProperty">StripeMaterialProperty条纹纹理</button><br />
+            <button id="GridMaterialProperty">GridMaterialProperty网格纹理</button><br />
+            <button id="PolylineGlowMaterialProperty">PolylineGlowMaterialProperty多段线发光纹理</button><br />
+            <button id="PolylineOutlineMaterialProperty">PolylineOutlineMaterialProperty多段线外边框线纹理</button>
+        </div>
+        <br>
 
         <div class="nowrap">
             Cesium版本：<label id="cesium-version"></label>
@@ -68,30 +78,135 @@
             }
         });
 
-
-        //ColorMaterialProperty--颜色材质
+        //添加一个椭圆，默认采用颜色材质
         var entity = api.viewer.entities.add({
             position: Cesium.Cartesian3.fromDegrees(116.4, 40),
+            ellipse: {
+                semiMinorAxis: 2500.0,
+                semiMajorAxis: 4000.0,
+                material: Cesium.Color.RED.withAlpha(0.5) //可设置不同的MaterialProperty
+            }
+        });
+        var ellipse = entity.ellipse;
+        var entityPolyline = viewer.entities.add({
+            polyline: {
+                positions: Cesium.Cartesian3.fromDegreesArray([
+                    116.3, 39.95,
+                    116.5, 39.95
+                ]),
+                width: 20,
+                material: Cesium.Color.RED
+            }
+        });
+        var polyline = entityPolyline.polyline;
+        viewer.zoomTo(viewer.entities);
+
+
+        //ColorMaterialProperty 颜色材质
+        var entityColor = api.viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.5, 40),
             ellipse: {
                 semiMinorAxis: 2500.0,
                 semiMajorAxis: 4000.0,
                 material: Cesium.Color.BLUE.withAlpha(0.5) //可设置不同的MaterialProperty
             }
         });
+        //也可以
+        //entityColor.ellipse.material = Cesium.Color.BLUE.withAlpha(0.5)
+
+
+        //ImageMaterialProperty 图片材质
+        var entityImage = api.viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.3, 40),
+            ellipse: {
+                semiMinorAxis: 2500.0,
+                semiMajorAxis: 4000.0,
+                material: new Cesium.ImageMaterialProperty({
+                    image: '../../assets/img/arrow.png',
+                    color: Cesium.Color.BLUE,
+                    repeat: new Cesium.Cartesian2(4, 4)
+                }),
+            }
+        });
+        //也可以这么写
+        // entityImage.ellipse.material = new Cesium.ImageMaterialProperty({
+        //     image: '../../assets/img/arrow.png',
+        //     color: Cesium.Color.BLUE,
+        //     repeat : new Cesium.Cartesian2(4, 4)
+        // });
+        //也可以简单的写成
+        // entityImage.ellipse.material = '../../assets/img/arrow.png';
+
+
+        //CheckerboardMaterialProperty 棋盘纹理
+        var entityCheckerboard = api.viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.3, 40.05),
+            ellipse: {
+                semiMinorAxis: 2500.0,
+                semiMajorAxis: 4000.0,
+                material: new Cesium.CheckerboardMaterialProperty({
+                    evenColor: Cesium.Color.WHITE,
+                    oddColor: Cesium.Color.BLACK,
+                    repeat: new Cesium.Cartesian2(4, 4)
+                }),
+            }
+        });
+        //也可以
+        // entityCheckerboard.ellipse.material = new Cesium.CheckerboardMaterialProperty({
+        //     evenColor: Cesium.Color.WHITE,
+        //     oddColor: Cesium.Color.BLACK,
+        //     repeat: new Cesium.Cartesian2(4, 4)
+        // });
 
 
 
+        //StripeMaterialProperty 条纹纹理
+        var entityStripe = api.viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.4, 40.05),
+            ellipse: {
+                semiMinorAxis: 2500.0,
+                semiMajorAxis: 4000.0,
+                material: new Cesium.StripeMaterialProperty({
+                    evenColor: Cesium.Color.WHITE,
+                    oddColor: Cesium.Color.BLACK,
+                    repeat: 32,
+                    offset: 20,
+                    orientation: Cesium.StripeOrientation.VERTICAL
+                }),
+            }
+        });
+        //也可以
+        // entityStripe.ellipse.material = new Cesium.StripeMaterialProperty({
+        //   evenColor : Cesium.Color.WHITE,
+        //   oddColor : Cesium.Color.BLACK,
+        //   repeat : 32,
+        //   offset:20,
+        //   orientation:Cesium.StripeOrientation.VERTICAL 
+        // });
 
 
 
-
-
-
-
-
-
-
-
+        //GridMaterialProperty 网格纹理
+        var entityGrid = api.viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.5, 40.05),
+            ellipse: {
+                semiMinorAxis: 2500.0,
+                semiMajorAxis: 4000.0,
+                material: new Cesium.GridMaterialProperty({
+                    color: Cesium.Color.YELLOW,
+                    cellAlpha: 0.2,
+                    lineCount: new Cesium.Cartesian2(8, 8),
+                    lineThickness: new Cesium.Cartesian2(2.0, 2.0)
+                }),
+            }
+        });
+        //也可以
+        // entityGrid.ellipse.material = new Cesium.GridMaterialProperty({
+        //   color : Cesium.Color.YELLOW,
+        //   cellAlpha : 0.2,
+        //   lineCount : new Cesium.Cartesian2(8, 8),
+        //   lineThickness : new Cesium.Cartesian2(2.0, 2.0)
+        // });
 
 
 
@@ -103,14 +218,62 @@
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向目标
                     // viewer.zoomTo(modelEntity);
-                    api.viewer.camera.flyTo({
-                        destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
-                            15.0),
-                        orientation: {
-                            heading: Cesium.Math.toRadians(0.0),
-                            pitch: Cesium.Math.toRadians(-45.0),
-                            roll: 0.0
-                        }
+                    // api.viewer.camera.flyTo({
+                    //     destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
+                    //         15.0),
+                    //     orientation: {
+                    //         heading: Cesium.Math.toRadians(0.0),
+                    //         pitch: Cesium.Math.toRadians(-45.0),
+                    //         roll: 0.0
+                    //     }
+                    // });
+                    viewer.zoomTo(viewer.entities);
+                    break;
+                case 'ColorMaterialProperty': //ColorMaterialProperty颜色材质
+                    ellipse.material = Cesium.Color.BLUE.withAlpha(0.5)
+                    break;
+                case 'ImageMaterialProperty': //ImageMaterialProperty图片纹理
+                    ellipse.material = new Cesium.ImageMaterialProperty({
+                        image: '../../assets/img/arrow.png',
+                        color: Cesium.Color.BLUE,
+                        repeat: new Cesium.Cartesian2(4, 4)
+                    });
+                    break;
+                case 'CheckerboardMaterialProperty': //CheckerboardMaterialProperty棋盘纹理
+                    ellipse.material = new Cesium.CheckerboardMaterialProperty({
+                        evenColor: Cesium.Color.WHITE,
+                        oddColor: Cesium.Color.BLACK,
+                        repeat: new Cesium.Cartesian2(4, 4)
+                    });
+                    break;
+                case 'StripeMaterialProperty': //StripeMaterialProperty条纹纹理
+                    ellipse.material = new Cesium.StripeMaterialProperty({
+                        evenColor: Cesium.Color.WHITE,
+                        oddColor: Cesium.Color.BLACK,
+                        repeat: 32,
+                        offset: 20,
+                        orientation: Cesium.StripeOrientation.VERTICAL
+                    });
+                    break;
+                case 'GridMaterialProperty': //GridMaterialProperty网格纹理
+                    ellipse.material = new Cesium.GridMaterialProperty({
+                        color: Cesium.Color.YELLOW,
+                        cellAlpha: 0.2,
+                        lineCount: new Cesium.Cartesian2(8, 8),
+                        lineThickness: new Cesium.Cartesian2(2.0, 2.0)
+                    });
+                    break;
+                case 'PolylineGlowMaterialProperty': //PolylineGlowMaterialProperty多段线发光纹理
+                    polyline.material = new Cesium.PolylineGlowMaterialProperty({
+                        glowPower: 0.2,
+                        color: Cesium.Color.BLUE
+                    });
+                    break;
+                case 'PolylineOutlineMaterialProperty': //PolylineOutlineMaterialProperty多段线外边框线纹理
+                    polyline.material = new Cesium.PolylineOutlineMaterialProperty({
+                        color: Cesium.Color.ORANGE,
+                        outlineWidth: 3,
+                        outlineColor: Cesium.Color.BLACK
                     });
                     break;
                 default:

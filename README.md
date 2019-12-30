@@ -12,6 +12,9 @@ Cesium 入门示例
   - [[未完成]第一人称漫游](https://sogrey.github.io/Cesium-start-Example/examples/camera/first-person-roaming.html)
 - 模型
   - [模型缩放](https://sogrey.github.io/Cesium-start-Example/examples/model/ModelScale.html)
+- 材质（Material）
+  - [MaterialProperty设置模型材质](https://sogrey.github.io/Cesium-start-Example/examples/material/MaterialProperty设置模型材质.html)
+  - [自定义材质](https://sogrey.github.io/Cesium-start-Example/examples/material/customMaterial.html)
 - 添加视频
   - [视频融合](https://sogrey.github.io/Cesium-start-Example/examples/video/Video-Fusion.html)
 - 粒子效果
