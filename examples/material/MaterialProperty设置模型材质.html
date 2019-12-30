@@ -217,16 +217,6 @@
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向目标
-                    // viewer.zoomTo(modelEntity);
-                    // api.viewer.camera.flyTo({
-                    //     destination: Cesium.Cartesian3.fromDegrees(116.3912718804786, 39.90576790017647,
-                    //         15.0),
-                    //     orientation: {
-                    //         heading: Cesium.Math.toRadians(0.0),
-                    //         pitch: Cesium.Math.toRadians(-45.0),
-                    //         roll: 0.0
-                    //     }
-                    // });
                     viewer.zoomTo(viewer.entities);
                     break;
                 case 'ColorMaterialProperty': //ColorMaterialProperty颜色材质
