@@ -16,12 +16,16 @@ Cesium 入门示例
 - 材质（Material）
   - [MaterialProperty设置模型材质](https://sogrey.github.io/Cesium-start-Example/examples/material/MaterialProperty设置模型材质.html)
   - [自定义材质](https://sogrey.github.io/Cesium-start-Example/examples/material/customMaterial.html)
+  - [流动纹理](https://sogrey.github.io/Cesium-start-Example/examples/path/animationLine.html)
 - 添加视频
   - [视频融合](https://sogrey.github.io/Cesium-start-Example/examples/video/Video-Fusion.html)
 - 粒子效果
   - [ParticleSystem](https://sogrey.github.io/Cesium-start-Example/examples/ParticleSystem/ParticleSystem.html)
+- 拾取
+  - [pick-position](https://sogrey.github.io/Cesium-start-Example/examples/InputAction-Pick/pick-position.html)
 - 其他
   - [添加图标标签，自定义气泡](https://sogrey.github.io/Cesium-start-Example/examples/other/CustomBubble.html)
+  - [HtmlBillboards](https://sogrey.github.io/Cesium-start-Example/examples/Entity/billboard/CesiumHtmlBillboards.html)
 
 ## License
 [MIT License](https://sogrey.github.io/about/mit.html)
