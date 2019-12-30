@@ -24,6 +24,17 @@ GLEAnimationFlowMaterial = (function (Cesium) {
 
 // 流动纹理线  FlowLineMaterialProperty 图案、纹理自定义
 
+/*
+参数：
+
+时间间隔,默认值1e3
+贴图（图片链接、canvas base64）
+颜色，默认rgba(0,0,0,0)
+是否Y方向流动,默认否-X方向
+平铺方向：X or Y,默认X
+
+*/
+
 // https://www.wellyyss.cn/ysCesium//plugins/ysc/ysc.js
 
     //#region 流动纹理线

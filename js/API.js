@@ -67,6 +67,14 @@ API = function (divId, options) {
 };
 
 API.prototype = {
+    Version: {
+        getCesiumVersion: function () {
+            return Cesium.VERSION
+        },
+        getVersion: function () {
+            return "1.0.0"
+        }
+    },
     Model: {
         AddModel: function () {}
     },

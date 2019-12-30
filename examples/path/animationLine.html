@@ -30,7 +30,9 @@
             <button id="view-beijing-flyto">上京城</button>
         </div>
         <br>
-
+        <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
         <div class="nowrap">
             <label>已经设置默认视角在中国</label>
         </div>
@@ -67,6 +69,7 @@
             // // terrainProvider: Cesium.createWorldTerrain(),//开启地形之后，地形有了海拔高度，之前没开地形是添加的车子陷入地下
         };
         var api = new API("cesiumContainer", defaultOption);
+        $("#cesium-version").html(api.Version.getCesiumVersion());
         //添加小车模型
         var modelEntity = api.viewer.entities.add({
             name: 'milktruck',

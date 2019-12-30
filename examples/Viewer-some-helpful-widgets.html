@@ -68,6 +68,10 @@
             <label for="noRight">去掉版权</label>
         </div>
         <br>
+
+        <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
     </div>
     <script src="../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
@@ -91,7 +95,7 @@
             projectionPicker: true, //投影选择器
         };
         var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
-
+        $("#cesium-version").html(Cesium.VERSION);
         $(".nowrap input[type='checkbox']").click(function () {
             var isChecked = $(this).prop("checked");
             switch ($(this).attr("id")) {

@@ -31,6 +31,9 @@
         </div>
         <br>
         <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
+        <div class="nowrap">
             <label>已经设置默认视角在中国</label>
         </div>
         <br>
@@ -57,7 +60,7 @@
             showRenderLoopErrors: true,
             projectionPicker: false, //投影选择器
         };
-
+        $("#cesium-version").html(Cesium.VERSION);
         //设置默认视角在中国
         var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
         Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
