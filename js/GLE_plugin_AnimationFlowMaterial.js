@@ -22,20 +22,20 @@ GLEAnimationFlowMaterial = (function (Cesium) {
     _.prototype.config = function (options) {}
 
 
-// 流动纹理线  FlowLineMaterialProperty 图案、纹理自定义
+    // 流动纹理线  FlowLineMaterialProperty 图案、纹理自定义
 
-/*
-参数：
+    /*
+    参数：
 
-时间间隔,默认值1e3
-贴图（图片链接、canvas base64）
-颜色，默认rgba(0,0,0,0)
-是否Y方向流动,默认否-X方向
-平铺方向：X or Y,默认X
+    时间间隔,默认值1e3
+    贴图（图片链接、canvas base64）
+    颜色，默认rgba(0,0,0,0)
+    是否Y方向流动,默认否-X方向
+    平铺方向：X or Y,默认X
 
-*/
+    */
 
-// https://www.wellyyss.cn/ysCesium//plugins/ysc/ysc.js
+    // https://www.wellyyss.cn/ysCesium//plugins/ysc/ysc.js
 
     //#region 流动纹理线
     /*
@@ -43,13 +43,27 @@ GLEAnimationFlowMaterial = (function (Cesium) {
      * color 颜色
      * duration 持续时间 毫秒
      */
-    function FlowLineMaterialProperty(color, duration) {
+    function FlowLineMaterialProperty(params) {
+        //默认值
+        this.defaultOption = {
+            color: new Cesium.Color(0, 0, 0, 0),
+            duration: 0,
+            texture: drawCanvas(),
+            isAxisY: false,
+            repeat: false //X\Y\XY
+        };
+
+        //合并参数
+        this.option = EXT().merge(this.defaultOption, params);
+
         this._definitionChanged = new Cesium.Event();
         this._color = undefined;
         this._colorSubscription = undefined;
-        this.color = color;
-        this.duration = duration;
+        this.color = this.option.color;
+        this.duration = this.option.duration;
         this._time = (new Date()).getTime();
+
+        Cesium.Material.FlowLineImage = this.option.texture;// 设置材质贴图
     }
 
     Cesium.defineProperties(FlowLineMaterialProperty.prototype, {
@@ -91,7 +105,7 @@ GLEAnimationFlowMaterial = (function (Cesium) {
 
     Cesium.FlowLineMaterialProperty = FlowLineMaterialProperty;
     Cesium.Material.FlowLineType = 'FlowLine';
-    Cesium.Material.FlowLineImage = drawCanvas(); // '../../assets/img/p.png';
+    Cesium.Material.FlowLineImage = drawCanvas(); //'../../assets/img/p.png';
     Cesium.Material.FlowLineSource = "czm_material czm_getMaterial(czm_materialInput materialInput)\n\
             {\n\
                 czm_material material = czm_getDefaultMaterial(materialInput);\n\
@@ -142,6 +156,7 @@ GLEAnimationFlowMaterial = (function (Cesium) {
         if (!Cesium.defined(duration)) {
             duration = 20;
         }
+        
         viewer.entities.add({
             description: 'trail-line',
             name: 'test',
@@ -149,7 +164,11 @@ GLEAnimationFlowMaterial = (function (Cesium) {
                 clampToGround: true, //贴地
                 width: 10,
                 positions: curLinePointsArr,
-                material: new Cesium.FlowLineMaterialProperty(color, duration)
+                material: new Cesium.FlowLineMaterialProperty({
+                    color: color,
+                    texture:drawCanvas(),
+                    duration: duration
+                })
             }
         });
     }

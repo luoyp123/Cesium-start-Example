@@ -46,7 +46,9 @@
     <script src="../../js/API.js"></script>
 
     <script>
-        var api = new API("cesiumContainer", {});
+        var api = new API("cesiumContainer", {
+            shouldAnimate: true,
+        });
 
         $("#cesium-version").html(api.Version.getCesiumVersion());
 
@@ -55,9 +57,8 @@
         //对地形进行深度测试的缺点是，轻微的数字噪声或地形细节级别的切换有时会使在表面上消失的图元消失。
         api.globe.depthTestAgainstTerrain = true;
 
-
         //box
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Blue box',
             position: Cesium.Cartesian3.fromDegrees(115.0, 46.0, 0),
             box: {
@@ -67,7 +68,7 @@
         });
 
         //Circle
-        viewer.entities.add({
+        api.viewer.entities.add({
             position: Cesium.Cartesian3.fromDegrees(108.0, 46.0, 150000.0),
             name: 'Green circle at height',
             ellipse: {
@@ -79,7 +80,7 @@
         });
 
         //Ellipse
-        viewer.entities.add({
+        api.viewer.entities.add({
             position: Cesium.Cartesian3.fromDegrees(100.0, 45.0),
             name: 'Red ellipse on surface with outline',
             ellipse: {
@@ -92,7 +93,7 @@
         });
 
         //Corridor
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Red corridor on surface with rounded corners and outline',
             corridor: {
                 positions: Cesium.Cartesian3.fromDegreesArray([
@@ -108,7 +109,7 @@
         });
 
         //Cylinder
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Green cylinder with black outline',
             position: Cesium.Cartesian3.fromDegrees(92.0, 45.0, 200000.0),
             cylinder: {
@@ -122,7 +123,7 @@
         });
 
         //Cone
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Red cone',
             position: Cesium.Cartesian3.fromDegrees(92.0, 40.0, 200000.0),
             cylinder: {
@@ -134,7 +135,7 @@
         });
 
         //Polygon 
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Red polygon on surface',
             polygon: {
                 hierarchy: Cesium.Cartesian3.fromDegreesArray([115.0, 37.0,
@@ -148,7 +149,7 @@
         });
 
         //polyline
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Red line on the surface',
             polyline: {
                 positions: Cesium.Cartesian3.fromDegreesArray([
@@ -170,7 +171,7 @@
             return positions;
         }
 
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Red tube with rounded corners',
             polylineVolume: {
                 positions: Cesium.Cartesian3.fromDegreesArray([
@@ -184,7 +185,7 @@
         });
 
         //rectangle
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Red translucent rectangle with outline',
             rectangle: {
                 coordinates: Cesium.Rectangle.fromDegrees(80.0, 20.0, 110.0, 25.0),
@@ -195,7 +196,7 @@
         });
 
         //Sphere
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Red sphere with black outline',
             position: Cesium.Cartesian3.fromDegrees(100.0, 50.0, 300000.0),
             ellipsoid: {
@@ -207,7 +208,7 @@
         });
 
         //ellipsoid
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Blue ellipsoid',
             position: Cesium.Cartesian3.fromDegrees(114.0, 40.0, 300000.0),
             ellipsoid: {
@@ -217,7 +218,7 @@
         });
 
         //wall
-        viewer.entities.add({
+        api.viewer.entities.add({
             name: 'Green wall from surface with outline',
             wall: {
                 positions: Cesium.Cartesian3.fromDegreesArrayHeights([
@@ -232,13 +233,13 @@
         });
 
 
-        viewer.zoomTo(viewer.entities);
+        api.viewer.zoomTo(viewer.entities);
 
 
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向目标
-                    viewer.zoomTo(viewer.entities);
+                    api.viewer.flyTo(viewer.entities);
                     break;
                 default:
                     break;
