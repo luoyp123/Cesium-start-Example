@@ -3,6 +3,7 @@
  */
 
 API = function (divId, options) {
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNDI3NmNhMy0xZGY5LTQ2MTktYTI2Mi05Nzg4NmZjY2YyMjYiLCJpZCI6MTIwMDIsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1NjAyMjI0MTd9.iMhYqEzY5jG7mJQV9gV6eFlQudn-FmNZSRn-z9kpKiY';
     this.viewer = null, this.scene = null, this.camera = null, this.globe = null;
     var viewer = null,
         scene = null,
@@ -11,8 +12,8 @@ API = function (divId, options) {
     //默认配置
     defaultOption = {
         animation: false, //左下角控制动画            
-        baseLayerPicker: false, //右上角图层选择器            
-        fullscreenButton: false, //右下角全屏按钮          
+        baseLayerPicker: false, //右上角图层选择器
+        fullscreenButton: false, //右下角全屏按钮
         geocoder: false, //右上角搜索 
         sceneModePicker: false, //2d/3d切换     
         homeButton: false, //home键，点击回到默认视角
