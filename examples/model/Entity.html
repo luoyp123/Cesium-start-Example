@@ -57,6 +57,7 @@
         //对地形进行深度测试的缺点是，轻微的数字噪声或地形细节级别的切换有时会使在表面上消失的图元消失。
         api.globe.depthTestAgainstTerrain = true;
         api.viewer.terrainProvider = Cesium.createWorldTerrain();
+        
         //box
         api.viewer.entities.add({
             name: 'Blue box',
