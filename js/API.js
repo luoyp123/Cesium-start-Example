@@ -3,7 +3,7 @@
  */
 
 API = function (divId, options) {
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNDI3NmNhMy0xZGY5LTQ2MTktYTI2Mi05Nzg4NmZjY2YyMjYiLCJpZCI6MTIwMDIsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1NjAyMjI0MTd9.iMhYqEzY5jG7mJQV9gV6eFlQudn-FmNZSRn-z9kpKiY';
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ZjI2ODBlNC1lNTIyLTQ1ZWItYTQ3Yi0wNjYxZGZmMTJlY2EiLCJpZCI6MTIwMDIsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1ODIwNzM1Mzl9.QCuIujMOvm3Zep8JHioQaUf4AmphDhNPRmu1nN1lH4I';
     this.viewer = null, this.scene = null, this.camera = null, this.globe = null;
     var viewer = null,
         scene = null,

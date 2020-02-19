@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门 - cesiumWidget</title>
+    <style>
+        @import url(../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <div class="backdrop" id="menu">
+        <h2>CesiumWidget</h2>
+        <br>
+        <div>Cesium.CesiumWidget</div>
+        <div>创建一个不包含任何组件仅有地球的场景。</div>
+        <br><br>
+        <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
+    </div>
+    <script src="../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script>
+        var viewer = new Cesium.CesiumWidget("cesiumContainer");
+        $("#cesium-version").html(Cesium.VERSION);
+    </script>
+</body>
+
+</html>
