@@ -32,18 +32,18 @@
             Cesium版本：<label id="cesium-version"></label>
         </div>
         <div class="nowrap">
-           已经设置默认视角在中国
+            已经设置默认视角在中国
         </div>
         <br>
     </div>
     <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
     <script src="../../js/navigation.js"></script>
+    <script src="../../js/API.js"></script>
     <script>
         //设置默认视角在中国
         var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
         Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
-        $("#cesium-version").html(Cesium.VERSION);
         var viewer = null;
         var modelEntity = null;
         var timer = null;
@@ -53,8 +53,7 @@
                 requestWaterMask: false,
                 requestVertexNormals: true
             });
-            var imageryViewModels = getImageryProviderViewModels();
-            viewer = new Cesium.Viewer('cesiumContainer', {
+            var api = new API("cesiumContainer", {
                 geocoder: false,
                 homeButton: false,
                 sceneModePicker: true,
@@ -68,22 +67,19 @@
                 shouldAnimate: true,
                 navigationHelpButton: false,
                 navigationInstructionsInitiallyVisible: false,
-                mapProjection: new Cesium.WebMercatorProjection(),
                 showRenderLoopErrors: true,
                 imageryProvider: null,
-                terrainProvider: terrainProvider,
-                imageryProviderViewModels: imageryViewModels
             });
-            viewer.scene.globe.enableLighting = false; //太阳光
-            viewer.sceneModePicker.viewModel.duration = 0.0; //去掉二三维切换动画效果
-            viewer.scene.globe.depthTestAgainstTerrain = true;
+
+            $("#cesium-version").html(api.Version.getCesiumVersion());
+            api.viewer.scene.globe.enableLighting = false; //太阳光
+            api.viewer.sceneModePicker.viewModel.duration = 0.0; //去掉二三维切换动画效果
+            api.viewer.scene.globe.depthTestAgainstTerrain = true;
 
 
-            window.viewer = viewer;
+            window.viewer = api.viewer;
 
             viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
-            viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
-                ._creditContainer); //去掉版权信息
         }
 
         function loadGltfModel() {
@@ -125,37 +121,6 @@
             }, 50);
         }
 
-        function getImageryProviderViewModels() {
-            //卫星影像、地形阴影、标准地图
-            var imageryViewModels = [];
-            imageryViewModels.push(new Cesium.ProviderViewModel({
-                name: '谷歌地图',
-                category: "卫星影像",
-                iconUrl: Cesium.buildModuleUrl('../../../../SampleData/images/google_satellite.png'),
-                tooltip: '谷歌地图-卫星影像',
-                creationFunction: function () {
-                    var urls = ["http://www.google.cn/maps/vt?lyrs=s,h&x={x}&y={y}&z={z}"];
-                    var providers = createBaseLayerProvider(urls);
-                    return providers;
-                }
-            }));
-            return imageryViewModels;
-        }
-
-        function createBaseLayerProvider(urls) {
-            var arr = [];
-            for (var i = 0; i < urls.length; i++) {
-                var url = urls[i];
-                var provider = new Cesium.UrlTemplateImageryProvider({
-                    url: url,
-                    credit: ''
-                });
-                arr.push(provider);
-            }
-            return arr;
-        }
-
-
 
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
@@ -175,16 +140,6 @@
                     break;
             }
         });
-        //获取视角
-        function getCamera() {
-            return {
-                position: viewer.camera.position,
-                heading: viewer.camera.heading,
-                pitch: viewer.camera.pitch
-            }
-        }
-
-
 
         initViewer();
         loadGltfModel();

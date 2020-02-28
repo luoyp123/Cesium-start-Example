@@ -1,10 +1,10 @@
 /**
  * 
  */
-
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzM2Y4NzFhMy1iMGMxLTQ3Y2EtOTRlMS0wMjc0YzU1ZGU2MTMiLCJpZCI6MTIwMDIsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1ODI4NTkzNTl9.0gEg2Nw33lZCuSyR7cScyn2W91Zht1eWn0kxqGOtdxE';
+ 
 API = function (divId, options) {
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ZjI2ODBlNC1lNTIyLTQ1ZWItYTQ3Yi0wNjYxZGZmMTJlY2EiLCJpZCI6MTIwMDIsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1ODIwNzM1Mzl9.QCuIujMOvm3Zep8JHioQaUf4AmphDhNPRmu1nN1lH4I';
-    this.viewer = null, this.scene = null, this.camera = null, this.globe = null;
+   this.viewer = null, this.scene = null, this.camera = null, this.globe = null;
     var viewer = null,
         scene = null,
         camera = null,
