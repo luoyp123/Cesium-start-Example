@@ -5,7 +5,9 @@ function defined(value) {
 
 function getCamera(camera) {
     return {
-        position: camera.position, //位置
+        positionWC: camera.positionWC, //世界坐标位置
+        position: camera.position, //当前位置，相对于transform
+        transform: camera.transform, //旋转矩阵
         direction: camera.direction, //方向
         heading: camera.heading, //航向角
         pitch: camera.pitch //俯仰角
