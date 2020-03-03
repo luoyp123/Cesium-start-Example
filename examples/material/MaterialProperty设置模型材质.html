@@ -53,11 +53,10 @@
     </div>
     <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
-    <script src="../../js/navigation.js"></script>
-    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/navigation.js"></script>    
     <script src="../../js/DAT.GUI.min.js"></script>
     <script src="../../js/API.js"></script>
-
+    <script src="../../js/coordinate-transformation.js"></script>
     <script>
         var api = new API("cesiumContainer", {});
 
@@ -88,7 +87,7 @@
             }
         });
         var ellipse = entity.ellipse;
-        var entityPolyline = viewer.entities.add({
+        var entityPolyline = api.viewer.entities.add({
             polyline: {
                 positions: Cesium.Cartesian3.fromDegreesArray([
                     116.3, 39.95,
@@ -99,7 +98,7 @@
             }
         });
         var polyline = entityPolyline.polyline;
-        viewer.zoomTo(viewer.entities);
+        api.viewer.zoomTo(viewer.entities);
 
 
         //ColorMaterialProperty 颜色材质
@@ -217,7 +216,7 @@
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向目标
-                    viewer.zoomTo(viewer.entities);
+                    api.viewer.zoomTo(viewer.entities);
                     break;
                 case 'ColorMaterialProperty': //ColorMaterialProperty颜色材质
                     ellipse.material = Cesium.Color.BLUE.withAlpha(0.5)

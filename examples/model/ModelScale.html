@@ -47,13 +47,17 @@
         var viewer = null;
         var modelEntity = null;
         var timer = null;
+        var api;
+
+        //飞机位置
+        var position = Cesium.Cartesian3.fromDegrees(116.39, 39.9, 15000.0);
 
         function initViewer() {
             var terrainProvider = Cesium.createWorldTerrain({
                 requestWaterMask: false,
                 requestVertexNormals: true
             });
-            var api = new API("cesiumContainer", {
+            api = new API("cesiumContainer", {
                 geocoder: false,
                 homeButton: false,
                 sceneModePicker: true,
@@ -76,16 +80,14 @@
             api.viewer.sceneModePicker.viewModel.duration = 0.0; //去掉二三维切换动画效果
             api.viewer.scene.globe.depthTestAgainstTerrain = true;
 
-
-            window.viewer = api.viewer;
-
-            viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
+            api.viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
         }
 
         function loadGltfModel() {
             var url = "../../SampleData/models/Cesium_Air/Cesium_Air.gltf";
+            
             var bData = {
-                position: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 15000.0),
+                position: position.clone(),
                 model: {
                     uri: url,
                     scale: 1.0,
@@ -93,9 +95,13 @@
                     minimumPixelSize: 64
                 }
             };
-            modelEntity = viewer.entities.add(bData);
-            viewer.trackedEntity = modelEntity;
-            viewer.flyTo(modelEntity);
+            modelEntity = api.viewer.entities.add(bData);
+            api.viewer.trackedEntity = modelEntity;
+            // api.viewer.flyTo(modelEntity);
+            // var transform = Cesium.Transforms.eastNorthUpToFixedFrame(position.clone());
+            // api. viewer.camera.lookAtTransform(transform, new Cesium.Cartesian3(0.0, -100.0, 100.0));
+            var center = position.clone();
+            api.viewer.camera.lookAt(center, new Cesium.Cartesian3(0.0, -100.0, 100.0));
         }
 
         function startResizeModelScale() {
@@ -125,7 +131,7 @@
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
                 case "start": //开始缩放
-                    viewer.trackedEntity = null;
+                    api.viewer.trackedEntity = null;
                     startResizeModelScale();
                     break;
                 case "stop": //停止缩放
@@ -134,7 +140,7 @@
                     }
                     break;
                 case "findairplane":
-                    viewer.flyTo(modelEntity);
+                    api.viewer.flyTo(modelEntity);
                     break;
                 default:
                     break;

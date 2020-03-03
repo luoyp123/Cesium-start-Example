@@ -81,11 +81,10 @@ body {
     max-width: 23%;
 }
 
-.backdrop {
+.backdrop#menu {
     display: inline-block;
-    background: rgba(43, 131, 235, 0.3) !important;
     border-radius: 5px;
-    border: 1px solid #2F3576 !important;
+    background: rgba(42, 93, 154, 0.3) url(../assets/img/panel.png) 0 0 / 100% 100% no-repeat !important;
     padding: 5px 10px;
     color: #fff;
     line-height: 150%;
@@ -110,12 +109,14 @@ body {
 .backdrop::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
     border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     background: #535353;
 }
 
 .backdrop::-webkit-scrollbar-track {
     /*滚动条里面轨道*/
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     background: #EDEDED;

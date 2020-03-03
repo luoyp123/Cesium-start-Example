@@ -20,8 +20,9 @@
         <!-- <div class="header-info header-info-l">数据来源：互联网</div> -->
         <div class="header-info header-info-r">更新日期：2020-02-29</div>
     </header>
-    
-    <footer id="footer">@Sogrey 2020</footer>
+
+    <footer id="footer"><a href="https://github.com/Sogrey/Cesium-start-Example" target="_blank">@Sogrey</a> 2020
+    </footer>
     <div class="backdrop" id="menu">
         <div class="scrollbar"></div>
         <h2>Viewer camera</h2>
@@ -31,48 +32,23 @@
         </div>
         <br>
         <div class="nowrap">
-            <button id="setCamera">已经设置默认视角在中国</button>
+            <label>已经设置默认视角在中国</label>
         </div>
-        <br>        
+        <br>
     </div>
     <script src="../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
     <script src="../js/navigation.js"></script>
-    <script src="../../js/API.js"></script>
+    <script src="../js/coordinate-transformation.js"></script>
+    <script src="../js/API.js"></script>
     <script>
-        var defaultOption = {
-            animation: false, //左下角控制动画            
-            baseLayerPicker: false, //右上角图层选择器            
-            fullscreenButton: false, //右下角全屏按钮          
-            geocoder: false, //右上角搜索   
-            sceneModePicker: false, //2d/3d切换     
-            homeButton: false, //home键，点击回到默认视角
-            infoBox: false, //点击模型不显示cesium自带的信息框
-            // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
-            selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
-            timeline: false, //最下面时间轴            
-            navigationHelpButton: false, //右上角帮助按钮 
-            navigationInstructionsInitiallyVisibl: false,
-            useDefaultRenderLoop: true,
-            showRenderLoopErrors: true,
-            projectionPicker: false, //投影选择器
-        };
-        //设置默认视角在中国
-        var china = Cesium.Rectangle.fromDegrees(100, 10, 120, 70);
-        Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
 
-        var viewer = new Cesium.Viewer("cesiumContainer", defaultOption);
-
-        window.viewer = viewer;
-
-        viewer.extend(Cesium.viewerCesiumNavigationMixin, {}); //添加缩放控件
-        viewer._cesiumWidget._creditContainer.parentNode.removeChild(viewer._cesiumWidget
-            ._creditContainer); //去掉版权信息
+        var api = new API("cesiumContainer");
 
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {
                 case "view-beijing-flyto": //飞向北京城
-                    viewer.camera.flyTo({
+                    api.camera.flyTo({
                         destination: Cesium.Cartesian3.fromDegrees(116.39, 39.9, 15000.0),
                         orientation: {
                             heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
@@ -85,14 +61,6 @@
                     break;
             }
         });
-        //获取视角
-        function getCamera() {
-            return {
-                position: viewer.camera.position,
-                heading: viewer.camera.heading,
-                pitch: viewer.camera.pitch
-            }
-        }
     </script>
 </body>
 

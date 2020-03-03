@@ -1,10 +1,9 @@
 /**
- * 
+ * Token
  */
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzM2Y4NzFhMy1iMGMxLTQ3Y2EtOTRlMS0wMjc0YzU1ZGU2MTMiLCJpZCI6MTIwMDIsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1ODI4NTkzNTl9.0gEg2Nw33lZCuSyR7cScyn2W91Zht1eWn0kxqGOtdxE';
- 
-API = function (divId, options) {
-   this.viewer = null, this.scene = null, this.camera = null, this.globe = null;
+
+var API = function (divId, options) {
     var viewer = null,
         scene = null,
         camera = null,
@@ -36,13 +35,14 @@ API = function (divId, options) {
         Cesium.Camera.DEFAULT_VIEW_RECTANGLE = china;
 
         viewer = new Cesium.Viewer(divId, this.option);
-        window.viewer = viewer;
         scene = viewer.scene;
-        window.scene = scene;
         camera = viewer.camera;
-        window.camera = camera;
         globe = scene.globe;
-        window.globe = globe;
+        
+        window.viewer =viewer;
+        window.scene =scene;
+        window.camera =camera;
+        window.globe =globe;
 
         this.viewer = viewer;
         this.scene = scene;
@@ -57,7 +57,7 @@ API = function (divId, options) {
 
         viewer.scene.preRender.addEventListener(function () {
             viewer.scene.camera._suspendTerrainAdjustment = false;
-        })
+        });
 
         if (!scene.pickPositionSupported) {
             console.error('This browser does not support pickPosition.');
@@ -70,10 +70,10 @@ API = function (divId, options) {
 API.prototype = {
     Version: {
         getCesiumVersion: function () {
-            return Cesium.VERSION
+            return Cesium.VERSION;
         },
         getVersion: function () {
-            return "1.0.0"
+            return "1.0.0";
         }
     },
     Model: {
@@ -100,7 +100,7 @@ API.prototype = {
     Other: {
 
     }
-}
+};
 
 
 
@@ -134,13 +134,13 @@ EXT.fn = EXT.prototype = {
     },
     // 将配置项合并到默认配置项
     init: function (options) {
-        for (let name in options) {
+        for (var name in options) {
             this.defaults[name] = options[name];
         }
         return this;
     },
     merge: function () {
-        let self = this,
+        var self = this,
             _default = self.defaults,
             i = 1,
             length = arguments.length,

@@ -11,7 +11,7 @@ function getCamera(camera) {
         direction: camera.direction, //方向
         heading: camera.heading, //航向角
         pitch: camera.pitch //俯仰角
-    }
+    };
 }
 /**
  * 弧度转角度
@@ -156,7 +156,7 @@ function drawRayHelper(viewer, ray, color) {
 
     var result = new Cesium.Cartesian3();
     // getPositionByOriginDirectionAndDistance(ray.origin, ray.direction, 2.0, result);
-    Cesium.Ray.getPoint(ray, 10.0, result)
+    Cesium.Ray.getPoint(ray, 10.0, result);
     // result.z = ray.origin.z;
     var curLinePointsArr = [];
 
@@ -217,7 +217,7 @@ function computeModelMatrix(entity, time) {
 function computeWgs84Matrix(wgs84, time) {
     //WGS84 转 Cartesian3
     var positionCartesian3 = Cesium.Cartesian3.fromDegrees(wgs84.x /*longitude*/ , wgs84.y /*longitude*/ , wgs84.z /*height*/ );
-    computePositionMatrix(positionCartesian3, time)
+    computePositionMatrix(positionCartesian3, time);
 }
 /**
  * 根据世界坐标（Cartesian3）计算当前时间点飞机模型的位置矩阵
@@ -276,7 +276,7 @@ var ee = 0.00669342162296594323;
  */
 function wgs84togcj02(lng, lat) {
     if (out_of_china(lng, lat)) {
-        return [lng, lat]
+        return [lng, lat];
     } else {
         var dlat = transformlat(lng - 105.0, lat - 35.0);
         var dlng = transformlng(lng - 105.0, lat - 35.0);
@@ -288,7 +288,7 @@ function wgs84togcj02(lng, lat) {
         dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * PI);
         var mglat = lat + dlat;
         var mglng = lng + dlng;
-        return [mglng, mglat]
+        return [mglng, mglat];
     }
 }
 
@@ -300,7 +300,7 @@ function wgs84togcj02(lng, lat) {
  */
 function gcj02towgs84(lng, lat) {
     if (out_of_china(lng, lat)) {
-        return [lng, lat]
+        return [lng, lat];
     } else {
         var dlat = transformlat(lng - 105.0, lat - 35.0);
         var dlng = transformlng(lng - 105.0, lat - 35.0);
@@ -312,7 +312,7 @@ function gcj02towgs84(lng, lat) {
         dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * PI);
         mglat = lat + dlat;
         mglng = lng + dlng;
-        return [lng * 2 - mglng, lat * 2 - mglat]
+        return [lng * 2 - mglng, lat * 2 - mglat];
     }
 }
 
@@ -322,7 +322,7 @@ function transformlat(lng, lat) {
     ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0;
     ret += (20.0 * Math.sin(lat * PI) + 40.0 * Math.sin(lat / 3.0 * PI)) * 2.0 / 3.0;
     ret += (160.0 * Math.sin(lat / 12.0 * PI) + 320 * Math.sin(lat * PI / 30.0)) * 2.0 / 3.0;
-    return ret
+    return ret;
 }
 
 function transformlng(lng, lat) {
@@ -330,7 +330,7 @@ function transformlng(lng, lat) {
     ret += (20.0 * Math.sin(6.0 * lng * PI) + 20.0 * Math.sin(2.0 * lng * PI)) * 2.0 / 3.0;
     ret += (20.0 * Math.sin(lng * PI) + 40.0 * Math.sin(lng / 3.0 * PI)) * 2.0 / 3.0;
     ret += (150.0 * Math.sin(lng / 12.0 * PI) + 300.0 * Math.sin(lng / 30.0 * PI)) * 2.0 / 3.0;
-    return ret
+    return ret;
 }
 
 /**
@@ -370,15 +370,17 @@ function parabolaEquation(options, resultOut) {
     var num = options.num && options.num > 50 ? options.num : 50;
     var result = [];
     var dlt = L / num;
+
+    var tempH, lon, lat;
     if (Math.abs(options.pt1.lon - options.pt2.lon) > Math.abs(options.pt1.lat - options.pt2.lat)) { //以lon为基准
         var delLat = (options.pt2.lat - options.pt1.lat) / num;
         if (options.pt1.lon - options.pt2.lon > 0) {
             dlt = -dlt;
         }
         for (var i = 0; i < num; i++) {
-            var tempH = h - Math.pow((-0.5 * L + Math.abs(dlt) * i), 2) * 4 * h / Math.pow(L, 2);
-            var lon = options.pt1.lon + dlt * i;
-            var lat = options.pt1.lat + delLat * i;
+            tempH = h - Math.pow((-0.5 * L + Math.abs(dlt) * i), 2) * 4 * h / Math.pow(L, 2);
+            lon = options.pt1.lon + dlt * i;
+            lat = options.pt1.lat + delLat * i;
             result.push([lon, lat, tempH]);
         }
     } else { //以lat为基准
@@ -386,10 +388,10 @@ function parabolaEquation(options, resultOut) {
         if (options.pt1.lat - options.pt2.lat > 0) {
             dlt = -dlt;
         }
-        for (var i = 0; i < num; i++) {
-            var tempH = h - Math.pow((-0.5 * L + Math.abs(dlt) * i), 2) * 4 * h / Math.pow(L, 2);
-            var lon = options.pt1.lon + delLon * i;
-            var lat = options.pt1.lat + dlt * i;
+        for (var j = 0; j < num; j++) {
+            tempH = h - Math.pow((-0.5 * L + Math.abs(dlt) * j), 2) * 4 * h / Math.pow(L, 2);
+            lon = options.pt1.lon + delLon * j;
+            lat = options.pt1.lat + dlt * j;
             result.push([lon, lat, tempH]);
         }
     }
