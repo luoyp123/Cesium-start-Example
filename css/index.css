@@ -24,7 +24,7 @@ body {
     width: 100%;
     margin: 0 auto;
     height: 50px;
-    background: url("https://gitee.com/Sogrey/gitee-cdn/raw/master/imgs/header.png") 0 0 / 100% 100% no-repeat;
+    background: url("../assets/img/header.png") 0 0 / 100% 100% no-repeat;
     overflow: hidden;
 }
 
@@ -71,7 +71,7 @@ body {
     font-size: 12px;
     height: 24px;
     padding-top: 5px;
-    background: url("https://gitee.com/Sogrey/gitee-cdn/raw/master/imgs/footer.png") 0 0 / 100% 100% no-repeat;
+    background: url("../assets/img/footer.png") 0 0 / 100% 100% no-repeat;
 }
 
 
@@ -85,8 +85,7 @@ body {
 .backdrop#menu {
     display: inline-block;
     border-radius: 5px;
-    /* background: rgba(42, 93, 154, 0.3) url(../assets/img/panel.png) 0 0 / 100% 100% no-repeat !important; */
-    background: rgba(42, 93, 154, 0.3) url('https://gitee.com/Sogrey/gitee-cdn/raw/master/imgs/panel.png') 0 0 / 100% 100% no-repeat !important;
+    background: rgba(42, 93, 154, 0.3) url('../assets/img/panel.png') 0 0 / 100% 100% no-repeat !important;
     padding: 5px 10px;
     color: #fff;
     line-height: 150%;
