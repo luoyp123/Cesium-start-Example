@@ -25,9 +25,9 @@
     </footer>
     <div class="backdrop" id="menu">
         <div class="scrollbar"></div>
-        <h2>primitives 旋转</h2>
+        <h2>实现斜圆锥(primitive)</h2>
         <div class="nowrap">
-            <label>查看网页源码第84-86行。</label>
+            <label>查看网页源码第83-85行,或点击<a href="https://github.com/Sogrey/Cesium-start-Example/blob/master/examples/model/development_Cylinder.html#L83-L85" target="_blank">这里</a></label>
         </div>
         <br>
         <div class="nowrap">
@@ -41,7 +41,6 @@
     <script src="../../js/coordinate-transformation.js"></script>
     <script src="../../js/API.js"></script>
     <script>
-
         var api = new API("cesiumContainer");
 
         // Example 1: Draw a green cylinder and position with
@@ -112,6 +111,14 @@
         });
         api.scene.primitives.add(primitives);
 
+        api.camera.flyTo({
+            destination: new Cesium.Cartesian3(-2389970.5602601594, 5944058.154173028, 2963918.3349299645),
+            orientation: {
+                heading: 6.2027037088952115,
+                pitch: -0.48942156864984243,
+                roll: 0.0
+            }
+        });
     </script>
 </body>
 
