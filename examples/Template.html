@@ -18,7 +18,9 @@
     <header id="header">
         <h3 class="header-title">Cesium引擎入门示例模板</h3>
         <!-- <div class="header-info header-info-l">数据来源：互联网</div> -->
-        <div class="header-info header-info-r">更新日期：2020-02-29</div>
+        <!-- <div class="header-info header-info-l">更新日期：2020-02-29</div> -->
+        <div id="led_clock" class="header-info header-info-r"></div>
+
     </header>
 
     <footer id="footer"><a href="https://github.com/Sogrey/Cesium-start-Example" target="_blank">@Sogrey</a> 2020
@@ -35,15 +37,22 @@
             <label>已经设置默认视角在中国</label>
         </div>
         <br>
+        <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
+        <br>
     </div>
+    <script src="../js/js-led-clock.js"></script>
     <script src="../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
     <script src="../libs/cesium/Build/Cesium/Cesium.js"></script>
     <script src="../js/navigation.js"></script>
     <script src="../js/coordinate-transformation.js"></script>
     <script src="../js/API.js"></script>
     <script>
+        new LEDClock("led_clock");
 
         var api = new API("cesiumContainer");
+        $("#cesium-version").html(api.Version.getCesiumVersion());
 
         $(".nowrap button").click(function () {
             switch ($(this).attr("id")) {

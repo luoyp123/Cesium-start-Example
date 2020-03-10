@@ -1,0 +1,19 @@
+*{margin:0;padding: 0;}
+.clock-wrap li{list-style-type: none;}
+.clock-wrap{width:280px;height:56px;}
+.clock-wrap .clock{height: 73px;}
+.clock-wrap .clock ul li{width: 24px;height: 54px;float: left;margin:0 8px;}
+.clock-wrap .clock ul li ul{position: relative;}
+.clock-wrap .clock ul li ul li{width:21px;height: 5px;display: block;}
+.clock-wrap .clock ul li ul li:nth-child(1){position:absolute;left: -5px;top:-7px;}
+.clock-wrap .clock ul li ul li:nth-child(2){ position:absolute; transform:rotateZ(90deg); left:-7px; top:17px; -webkit-transform:rotateZ(90deg); -moz-transform:rotateZ(90deg); -ms-transform:rotateZ(90deg); -o-transform:rotateZ(90deg); }
+.clock-wrap .clock ul li ul li:nth-child(3){position:absolute;transform:rotateZ(90deg);left:22px;top:17px;}
+.clock-wrap .clock ul li ul li:nth-child(4){position:absolute;top: 17px;left: -4px;}
+.clock-wrap .clock ul li ul li:nth-child(5){position:absolute;transform:rotateZ(90deg);top:42px;left:-7px;}
+.clock-wrap .clock ul li ul li:nth-child(6){position:absolute;transform:rotateZ(90deg);left:22px;top: 43px;}
+.clock-wrap .clock ul li ul li:nth-child(7){position:absolute;top:45px;left: -4px;}
+.clock-wrap .clock ul .point{width: 2px;}
+.clock-wrap .clock ul .point span{display:block;height: 5px;width: 5px;background: #70baf8;margin:20px 2px;}
+.clock-wrap .date{position:relative; color: #70baf8; font-size:19px;}
+.clock-wrap .date span:first-child{float: left;margin-left: 3px;}
+.clock-wrap .date span:last-child{float: right;margin-right:10px;}
