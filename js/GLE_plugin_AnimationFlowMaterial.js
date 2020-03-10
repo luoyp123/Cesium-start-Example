@@ -63,7 +63,7 @@ GLEAnimationFlowMaterial = (function (Cesium) {
         this.duration = this.option.duration;
         this._time = (new Date()).getTime();
 
-        Cesium.Material.FlowLineImage = this.option.texture;// 设置材质贴图
+        Cesium.Material.FlowLineImage = this.option.texture; // 设置材质贴图
     }
 
     Cesium.defineProperties(FlowLineMaterialProperty.prototype, {
@@ -105,16 +105,19 @@ GLEAnimationFlowMaterial = (function (Cesium) {
 
     Cesium.FlowLineMaterialProperty = FlowLineMaterialProperty;
     Cesium.Material.FlowLineType = 'FlowLine';
-    Cesium.Material.FlowLineImage = drawCanvas(); //'../../assets/img/p.png';
+    Cesium.Material.FlowLineImage = drawCanvas(); //'../../assets/img/p.png';    
     Cesium.Material.FlowLineSource = "czm_material czm_getMaterial(czm_materialInput materialInput)\n\
             {\n\
                 czm_material material = czm_getDefaultMaterial(materialInput);\n\
                 vec2 st = materialInput.st;\n\
                 vec4 colorImage = texture2D(image, vec2(fract(st.s - time), st.t));\n\
-                material.alpha = colorImage.a * color.a;\n\
-                material.diffuse = (colorImage.rgb+color.rgb)/2.0;\n\
+                material.alpha = colorImage.a;\n\
+                material.diffuse = (colorImage.rgb)/2.0;\n\
                 return material;\n\
             }";
+
+            // material.alpha = colorImage.a * color.a;\n\
+            // material.diffuse = (colorImage.rgb+color.rgb)/2.0;\n\
 
     Cesium.Material._materialCache.addMaterial(Cesium.Material.FlowLineType, {
         fabric: {
@@ -131,16 +134,75 @@ GLEAnimationFlowMaterial = (function (Cesium) {
         }
     });
 
-    function drawCanvas() {
+
+
+    // getTemperatureGradientColors([
+    //     0,0,0,
+    //     255,0,0
+    // ],2);
+    /**
+     * 
+     * @param {*} colors 
+     * @param {*} repetitions 
+     */
+    function getTemperatureGradientColors(colors, repetitions) {
+        if (!colors || colors.length === 0 || !(colors.length % 3 === 0 || colors.length % 4 === 0)) {
+            throw new Error("无效颜色值。颜色值数组长度应为3的倍数（RGB，比如 [255,0,0]）,或4的倍数（RGBA,比如 [255,0,0,0.3]）");
+        }
+        var colorList = [];
+        if (colors.length % 3 == 0) { //RGB
+            for (let i = 0; i < colors.length; i += 3) {
+                colorList.push('rgb(' + colors[i] + ',' + colors[i + 1] + ',' + colors[i + 2] + ')');
+            }
+        } else if (colors.length % 4 == 0) { //RGBA
+            for (let i = 0; i < colors.length; i += 4) {
+                colorList.push('rgba(' + colors[i] + ',' + colors[i + 1] + ',' + colors[i + 2] + ',' + colors[i + 3] + ')');
+            }
+        }
+        if (!repetitions || repetitions < 1) {
+            repetitions = 1;
+        }
+        var snum = colorList.length * repetitions - 1;
+        var step = 1.0 / snum;
+        var startStop = 0.0;
+        var result = [];
+        for (let i = 0; i < repetitions; i++) {
+            for (let j = 0; j < colorList.length; j++) {
+                result.push({
+                    stop: startStop,
+                    color: colorList[j]
+                });
+                startStop += step;
+            }
+        }
+        return result;
+    }
+
+    function drawCanvas(colors, repetitions) {
+        var ColorStop =[{
+            stop: 0,
+            color: "rgba(255,255,0,0.2)"
+        },{
+            stop: 1,
+            color: "rgba(0,255,0,1)"
+        }];
+        if(colors&&colors.length>1&&repetitions){
+            ColorStop = getTemperatureGradientColors(colors, repetitions);
+        }
+
         let canvas = document.createElement('canvas');
-        canvas.width = 1200;
+        canvas.width = 50;
         canvas.height = 50;
         let ctx = canvas.getContext('2d');
-        let grd = ctx.createLinearGradient(0, 0, 1200, 0);
-        grd.addColorStop(0, "rgba(255,255,0,0.2)");
-        grd.addColorStop(1, "rgba(0,255,0,1)");
+        let grd = ctx.createLinearGradient(0, 0, 50, 0);
+
+        for (let i = 0; i < ColorStop.length; i++) {
+            let item = ColorStop[i];
+            grd.addColorStop(item.stop, item.color);
+        }
+
         ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, 1200, 50);
+        ctx.fillRect(0, 0, 50, 50);
         return canvas.toDataURL("image/png");
     }
     /**
@@ -151,12 +213,16 @@ GLEAnimationFlowMaterial = (function (Cesium) {
      * @param {Cesium.Color} color 颜色
      * @param {Number} duration 时间间隔
      */
-    drawLine = function (viewer, src, dst, color, duration) {
+    drawLine = function (viewer, src, dst, color, duration,colors, repetitions) {
         var curLinePointsArr = generateCurve(src, dst);
         if (!Cesium.defined(duration)) {
             duration = 20;
         }
-        
+
+        if(repetitions){
+            repetitions = Math.round(repetitions);
+        }
+
         viewer.entities.add({
             description: 'trail-line',
             name: 'test',
@@ -166,11 +232,44 @@ GLEAnimationFlowMaterial = (function (Cesium) {
                 positions: curLinePointsArr,
                 material: new Cesium.FlowLineMaterialProperty({
                     color: color,
-                    texture:drawCanvas(),
+                    texture: drawCanvas(colors, repetitions), //'../../assets/img/flow5.png',//
                     duration: duration
                 })
             }
         });
+
+        // viewer.entities.add({
+        //     description: 'trail-line',
+        //     name: 'test',
+        //     polyline: {
+        //         clampToGround: true, //贴地
+        //         width: 10,
+        //         positions: curLinePointsArr,
+        //         material: new Cesium.Material({
+        //             fabric : {
+        //                 type : 'Color',
+        //                 uniforms : {
+        //                     color : new Cesium.Color(1.0, 1.0, 0.0, 1.0)
+        //                 }
+        //             }
+        //         })
+        //     }
+        // });
+        // viewer.entities[_0x42bb("0xc")]({
+        //     name: x[_0x42bb("0x4")],
+        //     polyline: {
+        //         positions: Cesium[_0x42bb("0x15")][_0x42bb("0x29")]([117.204289, 31.763824, 32.05,
+        //             117.228083, 31.791911, 41.73
+        //         ]),
+        //         width: 40,
+        //         material: new(mars3d[_0x42bb("0x23")])({
+        //             color: Cesium[_0x42bb("0x7")][_0x42bb("0xe")],
+        //             duration: 1e3,
+        //             url: _0x42bb("0x1c"),
+        //             repeat: new(Cesium[_0x42bb("0x24")])(10, 1)
+        //         })
+        //     }
+        // })
     }
 
     function generateCurve(src, dst) {

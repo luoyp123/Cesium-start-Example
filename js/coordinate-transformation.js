@@ -41,7 +41,7 @@ function cartesian3ToCartesian2(cartesian3) {
 function cartesian3ToCartographic(cartesian3) {
     if (Cesium.defined(cartesian3) && Cesium.Cartesian3.distance(cartesian3, new Cesium.Cartesian3()) > 0)
         return scene.globe.ellipsoid.cartesianToCartographic(cartesian3); //其中cartesian3为一个Cesium.Cartesian3。
-    else console.log("cartesian3 must not null or ZERO");
+    else console.log("cartesian3 must be NOT null or zero.");
 }
 //地理坐标到经纬度坐标的转换
 function cartographicToWgs84(cartographic) {
@@ -180,7 +180,7 @@ function drawRayHelper(viewer, ray, color) {
             }
         });
 
-        viewer.flyTo(purpleArrow);
+        // viewer.flyTo(purpleArrow);
     }
 }
 /**

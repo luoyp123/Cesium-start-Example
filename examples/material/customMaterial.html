@@ -153,7 +153,15 @@
             console.log(position, points.length);
             if (points.length >= 2) {
                 drawLine(api.viewer, points[points.length - 2], points[points.length - 1], Cesium.Color.GREEN,
-                    1000);
+                    1000
+                    ,[
+                        255,0,0,.2,
+                        255,255,0,.2,
+                        0,255,0,.2,
+                        0,255,255,.2,
+                        0,0,255,.2
+                    ],4
+                    );
             }
         }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
     </script>

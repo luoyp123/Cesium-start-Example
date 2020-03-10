@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - 热图</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <header id="header">
+        <h3 class="header-title">primitives</h3>
+        <!-- <div class="header-info header-info-l">数据来源：互联网</div> -->
+        <div class="header-info header-info-r">更新日期：2020-03-09</div>
+    </header>
+
+    <footer id="footer"><a href="https://github.com/Sogrey/Cesium-start-Example" target="_blank">@Sogrey</a> 2020
+    </footer>
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>primitives 旋转</h2>
+        <div class="nowrap">
+            <label>查看网页源码第42行。</label>
+        </div>
+        <br>
+        <div class="nowrap">
+            <label>已经设置默认视角在中国</label>
+        </div>
+        <br>
+    </div>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/CesiumHeatmap.js"></script>
+    <script src="../../js/API.js"></script>
+    <script>
+        var api = new API("cesiumContainer");
+
+        // Example 1: Draw a green cylinder and position with
+        // a model matrix.
+
+        // Cylinder geometries are initially centered on the origin.
+        // We can use a model matrix to position the cylinder on the
+        // globe surface.
+        var length = 400000.0;
+        var positionOnEllipsoid = Cesium.Cartesian3.fromDegrees(110.0, 40.0);
+        var modelMatrix = Cesium.Matrix4.multiplyByTranslation(
+            Cesium.Transforms.eastNorthUpToFixedFrame(positionOnEllipsoid),
+            new Cesium.Cartesian3(0.0, 0.0, length * 0.5), new Cesium.Matrix4()
+        );
+        // Create the cylinder geometry.
+        var cylinderGeometry = new Cesium.CylinderGeometry({
+            length: length,
+            topRadius: 200000.0,
+            bottomRadius: 200000.0,
+            vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
+        });
+        // Create a geometry instance using the cylinder geometry
+        // created above. We can also specify a color attribute,
+        // in this case, we're creating a solid green color.
+        var greenCylinder = new Cesium.GeometryInstance({
+            geometry: cylinderGeometry,
+            modelMatrix: modelMatrix,
+            attributes: {
+                color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.GREEN)
+            }
+        });
+
+        // Example 2: Draw a red cone and position with
+        // a model matrix.
+        positionOnEllipsoid = Cesium.Cartesian3.fromDegrees(115.0, 40.0);
+        modelMatrix = Cesium.Matrix4.multiplyByTranslation(
+            Cesium.Transforms.eastNorthUpToFixedFrame(positionOnEllipsoid),
+            new Cesium.Cartesian3(0.0, 0.0, length * 0.5), new Cesium.Matrix4()
+        );
+        Cesium.Matrix4.multiplyByMatrix3(modelMatrix,
+            Cesium.Matrix3.fromRotationY(Math.PI / 4), //绕Y轴旋转 π/4
+            modelMatrix);
+        // Create the cylinder geometry.  To create a cone, set the
+        // top radius to zero.
+        cylinderGeometry = new Cesium.CylinderGeometry({
+            length: length,
+            topRadius: 0.0,
+            bottomRadius: 200000.0,
+            vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
+        });
+        // Create a geometry instance using the cylinder geometry
+        // created above.
+        var redCone = new Cesium.GeometryInstance({
+            geometry: cylinderGeometry,
+            modelMatrix: modelMatrix,
+            attributes: {
+                color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.RED)
+            }
+        });
+
+        // Add both instances to primitives.
+        var primitives = new Cesium.Primitive({
+            geometryInstances: [greenCylinder, redCone],
+            appearance: new Cesium.PerInstanceColorAppearance({
+                closed: true,
+                translucent: false
+            })
+        });
+        api.scene.primitives.add(primitives);
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - 热图</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <header id="header">
+        <h3 class="header-title">热力图</h3>
+        <!-- <div class="header-info header-info-l">数据来源：互联网</div> -->
+        <div class="header-info header-info-r">更新日期：2020-03-09</div>
+    </header>
+
+    <footer id="footer"><a href="https://github.com/Sogrey/Cesium-start-Example" target="_blank">@Sogrey</a> 2020
+    </footer>
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>热力图 CesiumHeatmap.js</h2>
+        <div class="nowrap">
+            <button id="findHeatMap">找到热力图</button>
+        </div>
+        <br>
+        <div class="nowrap">
+            <label>已经设置默认视角在中国</label>
+        </div>
+        <br>
+    </div>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminified/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/CesiumHeatmap.js"></script>
+    <script src="../../js/API.js"></script>
+    <script>
+        var api = new API("cesiumContainer");
+
+        // 116.39, 39.9
+
+        // 矩形坐标
+        var bounds = {
+            west: 90.0,
+            south: 30.0,
+            east: 140.0,
+            north: 40.0
+        }
+
+        var bounds2 = {
+            west: 90.0,
+            south: 40.0,
+            east: 140.0,
+            north: 50.0
+        }
+
+        // 初始化CesiumHeatmap
+        var heatMap = CesiumHeatmap.create(
+            api.viewer, // 视图层
+            bounds, // 矩形坐标
+            { // heatmap相应参数
+                maxOpacity: .5,
+                minOpacity: 0,
+                blur: .75
+            }
+        )
+
+        var sourceData = getData(300)
+        console.log(sourceData, 'sourceData')
+
+        // 添加数据 最小值，最大值，数据集
+        heatMap.setWGS84Data(0, 100, sourceData)
+        viewer.zoomTo(viewer.entities)
+
+        var times = 0
+
+        setInterval(function () {
+            times++
+            if (times % 2 === 0) {
+                heatMap.changeBounds(bounds)
+                heatMap.setWGS84Data(0, 100, sourceData)
+            } else {
+                heatMap.changeBounds(bounds2)
+                heatMap.setWGS84Data(0, 100, sourceData)
+            }
+        }, 2000)
+
+        // 动态数据 [{x: -97.6433525165054, y: 45.61443064377248, value: 11.409122369106317}]
+        function getData(length) {
+            var data = []
+            for (var i = 0; i < length; i++) {
+                var x = Math.random() * 50+90;
+                var y = Math.random() * 20+30;
+                var value = Math.random() * 100;
+                data.push({
+                    x: x,
+                    y: y,
+                    value: value,
+                    radius: 100
+                });
+            }
+            return data
+        }
+
+        $(".nowrap button").click(function () {
+            switch ($(this).attr("id")) {
+                case "findHeatMap": //找到热力图
+                    api.camera.flyTo({
+                        destination: Cesium.Rectangle.fromDegrees(90.0, 30.0, 140.0, 50.0),
+                        orientation: {
+                            heading: Cesium.Math.toRadians(0.0), // east, default value is 0.0 (north)
+                            pitch: Cesium.Math.toRadians(-90), // default value (looking down)
+                            roll: 0.0 // default value
+                        }
+                    });
+                    break;
+                default:
+                    break;
+            }
+        });
+    </script>
+</body>
+
+</html>
