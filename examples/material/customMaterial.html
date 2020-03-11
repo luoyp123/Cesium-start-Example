@@ -142,25 +142,38 @@
 
 
         var points = [];
-
+var positions = []; 
         var handler = new Cesium.ScreenSpaceEventHandler(api.viewer.canvas);
         handler.setInputAction(function (movement) {
             var mousePosition = Cesium.Cartesian2.clone(movement.position);
             var c2 = cartesian2ToCartesian3(mousePosition);
             var temp = cartesian3ToWgs84(c2);
+            positions=positions.concat(temp);
             var position = new Cesium.Cartesian3(temp[0], temp[1], temp[2]);
             points.push(position);
             console.log(position, points.length);
-            if (points.length >= 2) {
-                drawLine(api.viewer, points[points.length - 2], points[points.length - 1], Cesium.Color.GREEN,
-                    1000
+            // if (points.length >= 2) {
+            //     drawLine(api.viewer, points[points.length - 2], points[points.length - 1], Cesium.Color.GREEN,
+            //         1000
+            //         ,[
+            //             255,0,0,.2,
+            //             255,255,0,.2,
+            //             0,255,0,.2,
+            //             0,255,255,.2,
+            //             0,0,255,.2
+            //         ],4
+            //         );
+            // }
+            if (points.length ==5 ) {
+                drawLine2(api.viewer, positions, Cesium.Color.GREEN,
+                    10000
                     ,[
-                        255,0,0,.2,
-                        255,255,0,.2,
-                        0,255,0,.2,
-                        0,255,255,.2,
-                        0,0,255,.2
-                    ],4
+                        255,0,0,//.2,
+                        255,255,0,//.2,
+                        0,255,0,//.2,
+                        0,255,255,//.2,
+                        0,0,255,//.2
+                    ],4*points.length
                     );
             }
         }, Cesium.ScreenSpaceEventType.LEFT_DOWN);

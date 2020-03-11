@@ -116,8 +116,8 @@ GLEAnimationFlowMaterial = (function (Cesium) {
                 return material;\n\
             }";
 
-            // material.alpha = colorImage.a * color.a;\n\
-            // material.diffuse = (colorImage.rgb+color.rgb)/2.0;\n\
+    // material.alpha = colorImage.a * color.a;\n\
+    // material.diffuse = (colorImage.rgb+color.rgb)/2.0;\n\
 
     Cesium.Material._materialCache.addMaterial(Cesium.Material.FlowLineType, {
         fabric: {
@@ -179,14 +179,14 @@ GLEAnimationFlowMaterial = (function (Cesium) {
     }
 
     function drawCanvas(colors, repetitions) {
-        var ColorStop =[{
+        var ColorStop = [{
             stop: 0,
             color: "rgba(255,255,0,0.2)"
-        },{
+        }, {
             stop: 1,
             color: "rgba(0,255,0,1)"
         }];
-        if(colors&&colors.length>1&&repetitions){
+        if (colors && colors.length > 1 && repetitions) {
             ColorStop = getTemperatureGradientColors(colors, repetitions);
         }
 
@@ -213,13 +213,13 @@ GLEAnimationFlowMaterial = (function (Cesium) {
      * @param {Cesium.Color} color 颜色
      * @param {Number} duration 时间间隔
      */
-    drawLine = function (viewer, src, dst, color, duration,colors, repetitions) {
+    drawLine = function (viewer, src, dst, color, duration, colors, repetitions) {
         var curLinePointsArr = generateCurve(src, dst);
         if (!Cesium.defined(duration)) {
             duration = 20;
         }
 
-        if(repetitions){
+        if (repetitions) {
             repetitions = Math.round(repetitions);
         }
 
@@ -271,6 +271,49 @@ GLEAnimationFlowMaterial = (function (Cesium) {
         //     }
         // })
     }
+    drawLine2 = function (viewer, positions, color, duration, colors, repetitions) {
+        var curLinePointsArr = [];
+        var cartesian3s = [];
+        if (Cesium.defined(positions) && positions.length > 0) {
+            for (let i = 0; i < positions.length; i += 3) {
+                cartesian3s.push(new Cesium.Cartesian3(positions[i], positions[i + 1], positions[i + 2]));
+            }
+        }
+        console.log(cartesian3s);
+        if (cartesian3s.length >= 2) {
+            for (let i = 0; i < cartesian3s.length-1; i++) {
+                var curveArray = generateCurve(cartesian3s[i], cartesian3s[i + 1]);
+                if(i == 0)
+                curLinePointsArr = curLinePointsArr.concat(curveArray);
+                else
+                curLinePointsArr.push(curveArray[1]);
+            }
+        }
+
+        if (!Cesium.defined(duration)) {
+            duration = 20;
+        }
+
+        if (repetitions) {
+            repetitions = Math.round(repetitions);
+        }
+
+        viewer.entities.add({
+            description: 'trail-line',
+            name: 'test',
+            polyline: {
+                clampToGround: true, //贴地
+                width: 10,
+                positions: curLinePointsArr,
+                material: new Cesium.FlowLineMaterialProperty({
+                    color: color,
+                    texture: drawCanvas(colors, repetitions), //'../../assets/img/flow5.png',//
+                    duration: duration
+                })
+            }
+        });
+    }
+
 
     function generateCurve(src, dst) {
 
