@@ -1,11 +1,10 @@
-;
 /**
  * LED时钟
  * @nanme Sogrey
  * 
  * @version v1
  */
-LEDClock = (function (window) {
+var LEDClock = (function (window) {
     var a = ["0 1 2 4 5 6", "2 5", "0 2 3 4 6", "0 2 3 5 6", "1 2 3 5", "0 1 3 5 6", "0 1 3 4 5 6", "0 2 5", "0 1 2 3 4 5 6", "0 1 2 3 5 6"];
     var b = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
     var backImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFUAAAASCAYAAAAqqJKOAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAAAxElEQVR42mJUtuBgwAVEOAL/M4wCrODNj/WMuOQAAohpNEDJA/jCByCAmEYDlPoBCxBATKMBSv2ABQggptEApX7AAgQQ02iAUj9gAQKIaTRAqR+wAAHENBqg1A9YgABiGg0G6gOAABoNVBoAgAAaDVQaAIAAYsLX3RoF5HVfAQKIiVA/dhSQPh4AEEBMxAwQjALiAxQEAAKICZfEKCAvQEEAIICYCCkYBaQFKAgABBATsQpHAfHhBBBATKRqGAWEwwcgwAD/jDyHhccDLQAAAABJRU5ErkJggg==';
@@ -79,83 +78,83 @@ LEDClock = (function (window) {
                 .clock-wrap .date span:last-child{float: right;margin-right:10px;}
                 </style>
                 <div class="clock-wrap">
-            	<div class="clock">
-            		<ul>
-            			<li>
-            				<ul id="clock-time1">
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            				</ul>
-            			</li>
-            					<li>
-            				<ul id="clock-time2">
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            				</ul>
-            			</li>
-            			<li class="point"><span></span><span></span></li>
-            				<li>
-            				<ul id="clock-time3">
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            				</ul>
-            			</li>
-            			<li>
-            				<ul id="clock-time4">
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            				</ul>
-            			</li>
-            			<li class="point"><span></span><span></span></li>
-            				<li>
-            				<ul id="clock-time5">
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            				</ul>
-            			</li>
-            					<li>
-            				<ul id="clock-time6">
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            					<li><img src="` + backImg + `" width="100%" height="100%"></li>
-            				</ul>
-            			</li>
-            		</ul>
-            	</div>
-            	<div class="date">
-            	    <span id="clock-date-ymd">2015年12月11日</span>            
-            	    <span id="clock-date-week">星期三</span>
+                    <div class="clock">
+                        <ul>
+                            <li>
+                                <ul id="clock-time1">
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                </ul>
+                            </li>
+                                    <li>
+                                <ul id="clock-time2">
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                </ul>
+                            </li>
+                            <li class="point"><span></span><span></span></li>
+                                <li>
+                                <ul id="clock-time3">
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <ul id="clock-time4">
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                </ul>
+                            </li>
+                            <li class="point"><span></span><span></span></li>
+                                <li>
+                                <ul id="clock-time5">
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                </ul>
+                            </li>
+                                    <li>
+                                <ul id="clock-time6">
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                    <li><img src="` + backImg + `" width="100%" height="100%"></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="date">
+                        <span id="clock-date-ymd">2015年12月11日</span>            
+                        <span id="clock-date-week">星期三</span>
+                    </div>
                 </div>`;
-
 
                 div.style = "position:fixed;background: transparent;";
                 showTime();

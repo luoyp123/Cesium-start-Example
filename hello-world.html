@@ -21,14 +21,17 @@
 <body>
     <div id="cesiumContainer" style="height: 100%;"></div>
     <script src="libs/cesium/Build/Cesium/Cesium.js"></script>
+    <script src="libs/CesiumZh.js"></script><!-- 汉化 -->
     <script>
-        //如果token过期或控制台收到  类似于      
-        // Cesium.js:15877 GET https://api.cesium.com/v1/assets/2/endpoint?access_token=XXX 401        
-        // 请在这里输入你的token
+        // 如果token过期或控制台收到  类似于:
+        // GET https://api.cesium.com/v1/assets/2/endpoint?access_token=XXX 401        
+        // 请在这里输入你的token,如何注册token：http://sogrey.github.io/Cesium-start/zh/guide/02-Viewer-some-helpful-widgets.html#cesium-ion
         Cesium.Ion.defaultAccessToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyYmFmMDZjZi03ZTIzLTRmNDYtYmM4MS1hZmUyOTNlZWQ4N2MiLCJpZCI6MjU5LCJzY29wZXMiOlsiYXNyIiwiZ2MiXSwiaWF0IjoxNTgwNzQ2MDQzfQ.I05JcRTUCUA1RWX2y0oQa_p4dFV6tgaAKHrCU5AjlgI';
 
         var viewer = new Cesium.Viewer("cesiumContainer");
+
+        CesiumZh.load();
     </script>
 </body>
 
