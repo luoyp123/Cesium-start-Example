@@ -30,7 +30,7 @@ var LEDClock = (function (window) {
             str = str + d.toString() + "日";
 
         document.getElementById("clock-date-ymd").innerHTML = str;
-        document.getElementById("clock-date-week").innerHTML = b[time.getDay()];
+        document.getElementById("clock-date-week").innerHTML = b[time.getDay()%7];
         modiflyNum(1, parseInt(h / 10));
         modiflyNum(2, h % 10);
         modiflyNum(3, parseInt(m / 10));
