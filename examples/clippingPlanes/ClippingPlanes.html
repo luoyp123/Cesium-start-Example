@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - ClippingPlanes 剖切</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <header id="header">
+        <h3 class="header-title">ClippingPlanes 剖切</h3>
+        <!-- <div class="header-info header-info-l">数据来源：互联网</div> -->
+        <!-- <div class="header-info header-info-r">更新日期：2020-03-10</div> -->
+        <div id='led_clock' class="header-info header-info-r">更新日期：2020-03-18</div>
+    </header>
+
+    <footer id="footer"><a href="https://github.com/Sogrey/Cesium-start-Example" target="_blank">@Sogrey</a> 2020
+    </footer>
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>剖切(ClippingPlanes)</h2>
+        <br>
+        <div class="nowrap">
+            <input id="Enable-edge-styling" name="source" type="checkbox" checked />
+            <label for="Enable-edge-styling">Enable edge styling</label>
+        </div>
+        <br>
+        <div class="nowrap">
+            案例来源自cesium官方 <a href="https://sandcastle.cesium.com/?src=3D%20Tiles%20Clipping%20Planes.html" target="_blank">3D Tiles Clipping Planes</a>
+        </div>        
+        <br>
+        <div class="nowrap">
+            <label>已经设置默认视角在中国</label>
+        </div>
+        <br>
+        <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
+    </div>
+    <script src="../../js/js-led-clock.js"></script>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <!--CesiumUnminifiedCustom/Cesium.js 是修改过的Cesium.js -->
+    <script src="../../libs/cesium/Build/CesiumUnminifiedCustom/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/API.js"></script>
+    <script>
+        new LEDClock("led_clock");
+
+        var api = new API("cesiumContainer", {});
+        $("#cesium-version").html(api.Version.getCesiumVersion());
+
+        var viewer = api.viewer;
+        var scene = viewer.scene;
+
+        var viewModel = {
+            debugBoundingVolumesEnabled: false,
+            edgeStylingEnabled: true,
+        };
+
+        var targetY = 0.0;
+        var planeEntities = [];
+        var selectedPlane;
+        var clippingPlanes;
+
+        // Select plane when mouse down
+        var downHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+        downHandler.setInputAction(function (movement) {
+            var pickedObject = scene.pick(movement.position);
+            if (Cesium.defined(pickedObject) &&
+                Cesium.defined(pickedObject.id) &&
+                Cesium.defined(pickedObject.id.plane)) {
+                selectedPlane = pickedObject.id.plane;
+                selectedPlane.material = Cesium.Color.WHITE.withAlpha(0.05);
+                selectedPlane.outlineColor = Cesium.Color.WHITE;
+                scene.screenSpaceCameraController.enableInputs = false;
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+        // Release plane on mouse up
+        var upHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        upHandler.setInputAction(function () {
+            if (Cesium.defined(selectedPlane)) {
+                selectedPlane.material = Cesium.Color.WHITE.withAlpha(0.1);
+                selectedPlane.outlineColor = Cesium.Color.WHITE;
+                selectedPlane = undefined;
+            }
+
+            scene.screenSpaceCameraController.enableInputs = true;
+        }, Cesium.ScreenSpaceEventType.LEFT_UP);
+
+        // Update plane on mouse move
+        var moveHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+        moveHandler.setInputAction(function (movement) {
+            if (Cesium.defined(selectedPlane)) {
+                var deltaY = movement.startPosition.y - movement.endPosition.y;
+                targetY += deltaY;
+            }
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+        function createPlaneUpdateFunction(plane) {
+            return function () {
+                plane.distance = targetY;
+                return plane;
+            };
+        }
+
+        function loadModel(url) {
+            clippingPlanes = new Cesium.ClippingPlaneCollection({
+                planes: [
+                    new Cesium.ClippingPlane(new Cesium.Cartesian3(0.0, 0.0, -1.0), 0.0)
+                ],
+                edgeWidth: viewModel.edgeStylingEnabled ? 1.0 : 0.0
+            });
+
+            var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 300.0);
+            var heading = Cesium.Math.toRadians(135.0);
+            var pitch = 0.0;
+            var roll = 0.0;
+            var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+            var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+            var entity = viewer.entities.add({
+                name: url,
+                position: position,
+                orientation: orientation,
+                model: {
+                    uri: url,
+                    scale: 8,
+                    minimumPixelSize: 100.0,
+                    clippingPlanes: clippingPlanes
+                }
+            });
+
+            // viewer.trackedEntity = entity;
+
+            for (var i = 0; i < clippingPlanes.length; ++i) {
+                var plane = clippingPlanes.get(i);
+                var planeEntity = viewer.entities.add({
+                    position: position,
+                    plane: {
+                        dimensions: new Cesium.Cartesian2(300.0, 300.0),
+                        material: Cesium.Color.WHITE.withAlpha(0.1),
+                        plane: new Cesium.CallbackProperty(createPlaneUpdateFunction(plane), false),
+                        outline: true,
+                        outlineColor: Cesium.Color.WHITE
+                    }
+                });
+
+                planeEntities.push(planeEntity);
+            }
+        }
+
+        // Power Plant design model provided by Bentley Systems
+        var modelUrl = '../../SampleData/models/Cesium_Air/Cesium_Air.glb';
+
+        loadModel(modelUrl);
+
+
+
+        api.camera.flyTo({
+            destination: new Cesium.Cartesian3(-2506003.797544674, -3847984.338205007, 4412139.901286835),
+            orientation: {
+                heading: 6.2726543559815635,
+                pitch: -0.13903701896561227,
+                roll: 0.0
+            }
+        });
+
+
+        $(".nowrap input[type='checkbox']").click(function () {
+            var isChecked = $(this).prop("checked");
+            switch ($(this).attr("id")) {
+                case "Enable-edge-styling":
+                    var edgeWidth = isChecked ? 1.0 : 0.0;
+                    clippingPlanes.edgeWidth = edgeWidth;
+                    break;
+            }
+        });
+    </script>
+</body>
+
+</html>

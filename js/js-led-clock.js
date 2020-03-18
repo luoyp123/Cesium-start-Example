@@ -156,7 +156,7 @@ var LEDClock = (function (window) {
                     </div>
                 </div>`;
 
-                div.style = "position:fixed;background: transparent;";
+                div.style = "position:fixed;background: transparent;";//自定义css
                 showTime();
                 setInterval(function () {
                     showTime();
