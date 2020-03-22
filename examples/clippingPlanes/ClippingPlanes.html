@@ -131,6 +131,7 @@
                 model: {
                     uri: url,
                     scale: 8,
+                    color: Cesium.Color.fromAlpha(Cesium.Color.WHITE, 0.999),
                     minimumPixelSize: 100.0,
                     clippingPlanes: clippingPlanes
                 }
@@ -159,8 +160,6 @@
         var modelUrl = '../../SampleData/models/Cesium_Air/Cesium_Air.glb';
 
         loadModel(modelUrl);
-
-
 
         api.camera.flyTo({
             destination: new Cesium.Cartesian3(-2506003.797544674, -3847984.338205007, 4412139.901286835),

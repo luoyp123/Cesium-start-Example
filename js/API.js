@@ -38,11 +38,11 @@ var API = function (divId, options) {
         scene = viewer.scene;
         camera = viewer.camera;
         globe = scene.globe;
-        
-        window.viewer =viewer;
-        window.scene =scene;
-        window.camera =camera;
-        window.globe =globe;
+
+        window.viewer = viewer;
+        window.scene = scene;
+        window.camera = camera;
+        window.globe = globe;
 
         this.viewer = viewer;
         this.scene = scene;
@@ -58,6 +58,13 @@ var API = function (divId, options) {
         viewer.scene.preRender.addEventListener(function () {
             viewer.scene.camera._suspendTerrainAdjustment = false;
         });
+
+        //关闭地形
+        // viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider({});
+        // scene.globe.show = false;//隐藏地球场景
+        // scene.skyAtmosphere.show = false; //去掉地球外面白色环绕圈，关掉大气渲染
+        // viewer.scene.globe.enableLighting = false; //关闭日光
+        // viewer.shadows = false; //关闭阴影
 
         if (!scene.pickPositionSupported) {
             console.error('This browser does not support pickPosition.');

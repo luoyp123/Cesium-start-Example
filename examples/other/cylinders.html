@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - 绘制圆柱钻孔</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <header id="header">
+        <h3 class="header-title">绘制圆柱钻孔</h3>
+        <!-- <div class="header-info header-info-l">数据来源：互联网</div> -->
+        <!-- <div class="header-info header-info-r">更新日期：2020-03-10</div> -->
+        <div id='led_clock' class="header-info header-info-r">更新日期：2020-03-22</div>
+    </header>
+
+    <footer id="footer"><a href="https://github.com/Sogrey/Cesium-start-Example" target="_blank">@Sogrey</a> 2020
+    </footer>
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>绘制圆柱钻孔(cylinder)</h2>
+        <br>
+        <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
+    </div>
+    <script src="../../js/js-led-clock.js"></script>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/Cesium/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/API.js"></script>
+    <script>
+        new LEDClock("led_clock");
+
+        var api = new API("cesiumContainer");
+        $("#cesium-version").html(api.Version.getCesiumVersion());
+
+        api.scene.globe.show = false; //隐藏地球场景
+        api.scene.skyAtmosphere.show = false; //去掉地球外面白色环绕圈，关掉大气渲染
+        api.viewer.scene.globe.enableLighting = false; //关闭日光
+        api.viewer.shadows = false; //关闭阴影
+
+        var entities = api.viewer.entities;
+
+        var i;
+        var height;
+        var positions;
+        var stripeMaterial = new Cesium.StripeMaterialProperty({
+            evenColor: Cesium.Color.WHITE.withAlpha(0.5),
+            oddColor: Cesium.Color.BLUE.withAlpha(0.5),
+            repeat: 5.0
+        });
+
+        entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.472305, 35.416434, -965),
+            cylinder: {
+                length: 200,
+                topRadius: 10,
+                bottomRadius: 10,
+                material: Cesium.Color.fromRandom({
+                    alpha: 1.0
+                })
+            }
+        });
+
+        entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.472305, 35.416434, -792.5), //-600
+            cylinder: {
+                length: 145,
+                topRadius: 10,
+                bottomRadius: 10,
+                material: Cesium.Color.fromRandom({
+                    alpha: 1.0
+                })
+            }
+        });
+
+
+        entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.472305, 35.416434, -642.5), //-455
+            cylinder: {
+                length: 155,
+                topRadius: 10,
+                bottomRadius: 10,
+                material: Cesium.Color.fromRandom({
+                    alpha: 1.0
+                })
+            }
+        });
+
+
+        entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.472305, 35.416434, -490), //-300
+            cylinder: {
+                length: 150,
+                topRadius: 10,
+                bottomRadius: 10,
+                material: Cesium.Color.fromRandom({
+                    alpha: 1.0
+                })
+            }
+        });
+
+
+        entities.add({
+            position: Cesium.Cartesian3.fromDegrees(116.472305, 35.416434, -322.5), //-150
+            cylinder: {
+                length: 185,
+                topRadius: 10,
+                bottomRadius: 10,
+                material: Cesium.Color.fromRandom({
+                    alpha: 1.0
+                })
+            }
+        });
+
+
+        // api.viewer.zoomTo(api.viewer.entities);
+
+        //我关闭了地形发现还有遮挡
+        
+        api.camera.flyTo({
+            destination: new Cesium.Cartesian3(-2320110.3554128474, 4658734.294141205, 3674860.137620042),
+            orientation: {
+                heading: 6.189612401028641,
+                pitch: -0.6019216391328781,
+                roll: 0.0
+            }
+        });
+    </script>
+</body>
+
+</html>
